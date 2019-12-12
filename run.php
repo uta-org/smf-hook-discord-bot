@@ -32,6 +32,7 @@ $client->on('ready', function () use ($client) {
 
 $client->on('message', function ($message) {
     echo 'Received Message from '.$message->author->tag.' in '.($message->channel instanceof \CharlotteDunois\Yasmin\Interfaces\DMChannelInterface ? 'DM' : 'channel #'.$message->channel->name ).' ['.$message->channel->getId().'] with '.$message->attachments->count().' attachment(s) and '.\count($message->embeds).' embed(s)'.PHP_EOL;
+
     if($message->content === '$ping') {
         $message->channel->send('Pong!');
     	// echo serialize($message->channel);
@@ -47,11 +48,10 @@ $client->login($token)->done();
 $loop->run();
 
 sleep(30);
-
 exit(0);
 
 function getCachedChannels($client) {
-    foreach ($client->channels as $channel) {
+    foreach ($client->channels->all() as $channel) {
         echo "Channel ID: ".$channel->getId();
     }
 }
