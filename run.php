@@ -51,7 +51,7 @@ sleep(30);
 exit(0);
 
 function getCachedChannels($client) {
-    foreach ($channel as $client->channels) {
+    foreach ($client->channels as $channel) {
         echo "Channel ID: ".$channel->getId();
     }
 }
