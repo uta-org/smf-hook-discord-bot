@@ -34,6 +34,10 @@ $client->on('message', function ($message) {
         $message->channel->send('Pong!');
     	// echo serialize($message->channel);
     }
+
+    if($message->content === '$list') {
+        getCachedChannels($client);
+    }
 });
 
 $token = getenv("SMF_TOKEN");
@@ -43,6 +47,12 @@ $loop->run();
 sleep(30);
 
 exit(0);
+
+function getCachedChannels($client) {
+    foreach ($channel as $client->channels) {
+        echo $channel->getId();
+    }
+}
 
 function tryLock()
 {
