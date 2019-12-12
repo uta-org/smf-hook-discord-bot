@@ -29,7 +29,11 @@ $client->on('ready', function () use ($client) {
 });
 
 $client->on('message', function ($message) {
-    echo 'Received Message from '.$message->author->tag.' in '.($message->channel instanceof \CharlotteDunois\Yasmin\Interfaces\DMChannelInterface ? 'DM' : 'channel #'.$message->channel->name ).' with '.$message->attachments->count().' attachment(s) and '.\count($message->embeds).' embed(s)'.PHP_EOL;
+    echo 'Received Message from '.$message->author->tag.' in '.($message->channel instanceof \CharlotteDunois\Yasmin\Interfaces\DMChannelInterface ? 'DM' : 'channel #'.$message->channel->name ).' ['.$message->channel->getId().'] with '.$message->attachments->count().' attachment(s) and '.\count($message->embeds).' embed(s)'.PHP_EOL;
+    if($message->content === '$ping') {
+        $message->channel->send('Pong!');
+    	// echo serialize($message->channel);
+    }
 });
 
 $token = getenv("SMF_TOKEN");
