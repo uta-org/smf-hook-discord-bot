@@ -32,7 +32,8 @@ $client->on('message', function ($message) {
     echo 'Received Message from '.$message->author->tag.' in '.($message->channel instanceof \CharlotteDunois\Yasmin\Interfaces\DMChannelInterface ? 'DM' : 'channel #'.$message->channel->name ).' with '.$message->attachments->count().' attachment(s) and '.\count($message->embeds).' embed(s)'.PHP_EOL;
 });
 
-$client->login($_ENV['SMF_TOKEN'])->done();
+$token = getenv("SMF_TOKEN");
+$client->login($token)->done();
 $loop->run();
 
 sleep(30);
