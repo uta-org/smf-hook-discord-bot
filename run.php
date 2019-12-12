@@ -52,7 +52,7 @@ exit(0);
 
 function getCachedChannels($client) {
     foreach ($client->channels->all() as $channel) {
-        echo "Channel ID: ".$channel->getId();
+        echo "Channel: ".$channel." [".$channel->getId()."]".PHP_EOL;
     }
 }
 
