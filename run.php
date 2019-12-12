@@ -52,7 +52,10 @@ exit(0);
 
 function getCachedChannels($client) {
     foreach ($client->channels->all() as $channel) {
-        echo "Channel: ".$channel." [".$channel->getId()."]".PHP_EOL;
+        //if($channel instanceof \CharlotteDunois\Yasmin\Models\CategoryChannel)
+        //    continue;
+
+        echo "Channel: ".$channel->name." [".$channel->getId()."]".PHP_EOL;
     }
 }
 
