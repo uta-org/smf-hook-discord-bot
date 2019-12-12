@@ -26,6 +26,8 @@ $client->on('error', function ($error) {
 
 $client->on('ready', function () use ($client) {
     echo 'Logged in as '.$client->user->tag.' created on '.$client->user->createdAt->format('d.m.Y H:i:s').PHP_EOL;
+
+    getCachedChannels($client);
 });
 
 $client->on('message', function ($message) {
