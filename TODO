@@ -1,0 +1,31 @@
+/*
+
+function getCachedChannels($client) {
+    foreach ($client->channels->all() as $channel) {
+        echo "Channel: ".$channel->name." [".$channel->getId()."]".PHP_EOL;
+    }
+}
+
+*/
+
+"Channel: bot-tests [654605831651852298]" pues por lo visto obtener los cached channels puede fucionar
+Asi q lo q voy a hacer son las tablas necesarias:
+
+==> A parte cada instancia deberá tener una row en una base de datos (id, channel, smf_url, forum_id, ... -- mirar mas parametros que se pueda especificar al SSI.php)
+==> Y luego otra tabla para las noticias obtenidas (id, instance_id, user_id, description, link, created_at ...)
+
+Voy a hacer una condición asi cuando se le pase $listen-channel se le mandará a la base de datos la id del canal a escuchar
+Y cuando se inicie el bot directamente empezará a postear noticias en dicho canal
+Para lo de las noticias voy a usar el php-html...
+Y lo unico q me faltaria es saber:
+
+- Como ejecutar en el background el php de forma continua, es facil
+- Buscar una utilidad que haga q se ejecute otra loop para lo de las noticias o bien usar la loop que ya existe (simplemente modificar o añadir una callback)
+
+Databases:
+
+===== smf_discord_instances
+id, channel_id, smf_url, board_id
+
+===== smf_discord_news
+id, instance_id, user_id, description, link, created_at
