@@ -14,6 +14,7 @@ echo "Hello world! Your PID is: ".$pid."\n";
 file_put_contents('pid.txt', $pid);
 
 require __DIR__.'/../composer-yasmin/vendor/autoload.php';
+require 'db/db.conn.php';
 
 // Include composer autoloader
 
@@ -31,15 +32,19 @@ $client->on('ready', function () use ($client) {
 });
 
 $client->on('message', function ($message) {
-    echo 'Received Message from '.$message->author->tag.' in '.($message->channel instanceof \CharlotteDunois\Yasmin\Interfaces\DMChannelInterface ? 'DM' : 'channel #'.$message->channel->name ).' ['.$message->channel->getId().'] with '.$message->attachments->count().' attachment(s) and '.\count($message->embeds).' embed(s)'.PHP_EOL;
+    echo 'Received Message from '.$message->author->tag.' in '.($message->channel instanceof \CharlotteDunois\Yasmin\Interfaces\DMChannelInterface ? 'DM' : 'channel #'.$message->channel->name ).' with '.$message->attachments->count().' attachment(s) and '.\count($message->embeds).' embed(s)'.PHP_EOL;
 
-    if($message->content === '$ping') {
+    /*if($message->content === '$ping') {
         $message->channel->send('Pong!');
     	// echo serialize($message->channel);
-    }
+    }*/
 
     if($message->content === '$list') {
         getCachedChannels($client);
+    }
+
+    if($message->content === '$listen-channel') {
+        getCachedChannel($db, $message);
     }
 });
 
@@ -50,11 +55,40 @@ $loop->run();
 sleep(30);
 exit(0);
 
+function listenChannel($db, $message) {
+    try {
+
+
+        $message->channel->send('Listening to channel #'.$message->channel->name.'!');
+        $message->channel->send('You need to contigure this by using `$listen-board <url> <board_id>`.');
+        $message->channel->send('Example: `$listen-board https://foro.elhacker.net/ 34`');
+    }
+    catch(Exception $e) {
+        promptException($message);
+    }
+    
+}
+
+// Used when starting to run once `listenChannel` method is executed
+function getChannelById($client, $id) {
+    foreach ($client->channels->all() as $channel) 
+    {
+        if($channel->getId() == $id)
+            return $channel;
+    }
+
+    return null;
+}
+
 function getCachedChannels($client) {
     foreach ($client->channels->all() as $channel) 
     {
         echo "Channel: ".$channel->name." [".$channel->getId()."]".PHP_EOL;
     }
+}
+
+function promptException($message) {
+    $message->channel->send(':stop_sign: Exception ocurred on the server side!');
 }
 
 function tryLock()
