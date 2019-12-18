@@ -1,6 +1,16 @@
 # SMF-Hook Discord Bot 
 
-To install this just run:
+## Commands:
+
+```
+$start <url> <id>
+$set url <url>
+$set board-id <id>
+$set channel
+$stop
+```
+
+To install this just run on your server:
 
 ```bash
 $ php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"

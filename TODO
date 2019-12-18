@@ -22,6 +22,11 @@ Y lo unico q me faltaria es saber:
 - Como ejecutar en el background el php de forma continua, es facil
 - Buscar una utilidad que haga q se ejecute otra loop para lo de las noticias o bien usar la loop que ya existe (simplemente modificar o añadir una callback)
 
+Commands:
+
+$remove-channel
+$change-listened-channel
+
 Databases:
 
 ===== smf_discord_instances

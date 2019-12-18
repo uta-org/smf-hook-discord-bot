@@ -9,14 +9,17 @@ if (!tryLock())
 register_shutdown_function('unlink', LOCK_FILE);
 
 # The rest of your script goes here....
+
 $pid = getmypid();
 echo "Hello world! Your PID is: ".$pid."\n";
 file_put_contents('pid.txt', $pid);
 
 require __DIR__.'/../composer-yasmin/vendor/autoload.php';
 require 'db/db.conn.php';
-
-// Include composer autoloader
+require 'funcs/db.funcs.php';
+require 'funcs/string.funcs.php';
+require 'funcs/run.funcs.php';
+require 'funcs/misc.funcs.php';
 
 $loop = \React\EventLoop\Factory::create();
 $client = new \CharlotteDunois\Yasmin\Client(array(), $loop);
@@ -28,7 +31,8 @@ $client->on('error', function ($error) {
 $client->on('ready', function () use ($client) {
     echo 'Logged in as '.$client->user->tag.' created on '.$client->user->createdAt->format('d.m.Y H:i:s').PHP_EOL;
 
-    getCachedChannels($client);
+    // TODO: Hook everything again when restarting bot
+    // getCachedChannels($client);
 });
 
 $client->on('message', function ($message) {
@@ -39,12 +43,14 @@ $client->on('message', function ($message) {
     	// echo serialize($message->channel);
     }*/
 
-    if($message->content === '$list') {
+    $contents = $message->content;
+
+    if($contents === '$list') {
         getCachedChannels($client);
     }
 
-    if($message->content === '$listen-channel') {
-        getCachedChannel($db, $message);
+    if(startsWith($contents, '$start')) {
+        startListening($db, $client, $message, getParams($contents));
     }
 });
 
@@ -54,60 +60,3 @@ $loop->run();
 
 sleep(30);
 exit(0);
-
-function listenChannel($db, $message) {
-    try {
-
-
-        $message->channel->send('Listening to channel #'.$message->channel->name.'!');
-        $message->channel->send('You need to contigure this by using `$listen-board <url> <board_id>`.');
-        $message->channel->send('Example: `$listen-board https://foro.elhacker.net/ 34`');
-    }
-    catch(Exception $e) {
-        promptException($message);
-    }
-    
-}
-
-// Used when starting to run once `listenChannel` method is executed
-function getChannelById($client, $id) {
-    foreach ($client->channels->all() as $channel) 
-    {
-        if($channel->getId() == $id)
-            return $channel;
-    }
-
-    return null;
-}
-
-function getCachedChannels($client) {
-    foreach ($client->channels->all() as $channel) 
-    {
-        echo "Channel: ".$channel->name." [".$channel->getId()."]".PHP_EOL;
-    }
-}
-
-function promptException($message) {
-    $message->channel->send(':stop_sign: Exception ocurred on the server side!');
-}
-
-function tryLock()
-{
-    # If lock file exists, check if stale.  If exists and is not stale, return TRUE
-    # Else, create lock file and return FALSE.
-
-    if (@symlink("/proc/" . getmypid(), LOCK_FILE) !== FALSE) # the @ in front of 'symlink' is to suppress the NOTICE you get if the LOCK_FILE exists
-        return true;
-
-    # link already exists
-    # check if it's stale
-    if (is_link(LOCK_FILE) && !is_dir(LOCK_FILE))
-    {
-        unlink(LOCK_FILE);
-        # try to lock again
-        return tryLock();
-    }
-
-    return false;
-}
-?>
