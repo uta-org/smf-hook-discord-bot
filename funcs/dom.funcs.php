@@ -12,9 +12,11 @@ function getContents($url) {
         ]);
 
         $page = $browser->newPage();
-        $page->goto($url);
+        $response = $page->goto($url);
 
         $contents = $page->content();
+        var_dump($response->headers());
+
         $browser->close();
 
         return $contents;
