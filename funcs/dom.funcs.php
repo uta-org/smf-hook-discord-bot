@@ -20,6 +20,15 @@ function getContents($url) {
         return $contents;
 }
 
+function getDomFromContents($url) {
+	$contents = getContents($url);
+	$dom = new Dom;
+	$dom->load($contents);
+
+	return $dom;
+}
+
+// Not working on Forums with Cloudflare protection
 function getDom($url) {
 	$dom = new Dom;
 	$dom->loadFromUrl($url, [], new ParseClient());
