@@ -132,6 +132,8 @@ function runLoop($url, $channel) {
     $dom = new Dom;
     $dom->loadFromUrl($url);
 
+    file_put_contents("ssi_test.html", $dom->outerHtml);
+
     $divs = $dom->find("div");    
     $tables = $dom->find("table");
 
