@@ -56,7 +56,7 @@ function startListening($db, $client, $message, $params) {
         // $message->channel->send('Example: `$listen-board https://foro.elhacker.net/ 34`');
     }
     catch(Exception $e) {
-        promptException($message);
+        promptException($message, $e);
     }
     
 }
@@ -109,6 +109,7 @@ function getCachedChannels($client) {
 }
 */
 
-function promptException($message) {
+function promptException($message, $e) {
+    echo $e->getMessage();
     $message->channel->send(':stop_sign: Exception ocurred on the server side!');
 }
