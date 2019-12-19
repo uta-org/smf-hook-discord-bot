@@ -19,8 +19,17 @@ function getParams($raw_command) {
 	return array_slice(explode(" ", $raw_command), 1);
 }
 
-function concatSqlWhere($channels) {
+function concatSqlWhere($channels, $param) {
+    $str = "";
 
+    for ($i = 0; $i < count($channels); $i++) { 
+        $str .= "channel_id = ?";
+
+        if($i + 1 < count($channels))
+            $str .= " OR ";
+    }
+
+    return $str;
 }
 
 function isUrl($text) {

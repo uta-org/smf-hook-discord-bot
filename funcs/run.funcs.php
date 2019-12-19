@@ -110,6 +110,6 @@ function getCachedChannels($client) {
 */
 
 function promptException($message, $e) {
-    echo $e->getMessage();
+    echo $e->getMessage().PHP_EOL;
     $message->channel->send(':stop_sign: Exception ocurred on the server side!');
 }
