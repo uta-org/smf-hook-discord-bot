@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 17-12-2019 a las 12:43:04
+-- Tiempo de generación: 19-12-2019 a las 10:53:15
 -- Versión del servidor: 10.1.41-MariaDB-0+deb9u1
 -- Versión de PHP: 7.3.12-1+0~20191128.49+debian9~1.gbp24559b
 
@@ -32,6 +32,13 @@ CREATE TABLE `smf_discord_instances` (
   `smf_url` text NOT NULL,
   `board_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `smf_discord_instances`
+--
+
+INSERT INTO `smf_discord_instances` (`id`, `channel_id`, `smf_url`, `board_id`) VALUES
+(2, 2147483647, 'https://foro.elhacker.net/', 34);
 
 -- --------------------------------------------------------
 
@@ -73,7 +80,7 @@ ALTER TABLE `smf_discord_news`
 -- AUTO_INCREMENT de la tabla `smf_discord_instances`
 --
 ALTER TABLE `smf_discord_instances`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT de la tabla `smf_discord_news`
 --
@@ -84,10 +91,10 @@ ALTER TABLE `smf_discord_news`
 --
 
 --
--- Filtros para la tabla `smf_discord_instances`
+-- Filtros para la tabla `smf_discord_news`
 --
-ALTER TABLE `smf_discord_instances`
-  ADD CONSTRAINT `smf_discord_instances_ibfk_1` FOREIGN KEY (`id`) REFERENCES `smf_discord_news` (`instance_id`);
+ALTER TABLE `smf_discord_news`
+  ADD CONSTRAINT `smf_discord_news_ibfk_1` FOREIGN KEY (`instance_id`) REFERENCES `smf_discord_instances` (`id`);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

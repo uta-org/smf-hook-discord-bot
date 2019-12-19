@@ -35,9 +35,6 @@ function startListening($db, $client, $message, $params) {
 
     	// `isAnyChannelAlreadyListened` func
         $where_clause = concatSqlWhere($ids);
-
-        echo $where_clause;
-        print_r($ids);
     	$isEmpty = !getResult($db, 'smf_discord_instances', $where_clause, $ids, 'id');
 
     	if($isEmpty) {
