@@ -22,7 +22,7 @@ function getContents($url) {
 
 function getDom($url) {
 	$dom = new Dom;
-	$dom->loadFromUrl($url, [],  new ParseClient());
+	$dom->loadFromUrl($url, [], new ParseClient());
 
 	return $dom;
 }
@@ -31,7 +31,7 @@ class ParseClient implements CurlInterface
 {
     public function get($url) : string
     {
-        $client = new Client();
+        $client = new GuzzleHttp\Client();
 
         return $client->request('GET', $url, [
             'headers' => [
