@@ -131,8 +131,10 @@ $loop->addPeriodicTimer(5 * 60, function () {
 function runLoop($url, $channel) {
     // TODO: Add pupeeter method
 
-    $dom = new Dom;
-    $dom->loadFromUrl($url);
+    //$dom = new Dom;
+    //$dom->loadFromUrl($url);
+    
+    $dom = getDom($url);
 
     file_put_contents("ssi_test.html", $dom->outerHtml);
 

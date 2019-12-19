@@ -2,6 +2,7 @@
 
 use Nesk\Puphpeteer\Puppeteer;
 use Nesk\Rialto\Data\JsFunction;
+use PHPHtmlParser\Dom;
 
 function getContents($url) {
         $puppeteer = new Puppeteer;
@@ -16,4 +17,26 @@ function getContents($url) {
         $browser->close();
 
         return $contents;
+}
+
+function getDom($url) {
+	$dom = new Dom;
+	$dom->loadFromUrl($url, [],  new ParseClient());
+
+	return $dom;
+}
+
+class ParseClient implements CurlInterface
+{
+    public function get($url)
+    {
+        $client = new Client();
+
+        return $client->request('GET', $url, [
+            'headers' => [
+                'User-Agent' => 'testing/1.0',
+            ],
+            // 'proxy' => 'http://202.56.203.40:80'
+        ])->getBody();
+    }
 }
