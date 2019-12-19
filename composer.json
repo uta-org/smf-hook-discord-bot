@@ -2,6 +2,7 @@
     "require": {
         "charlottedunois/yasmin": "^0.7.0",
         "paquettg/php-html-parser": "^2.1",
-        "nesk/puphpeteer": "^1.6"
+        "nesk/puphpeteer": "^1.6",
+        "guzzlehttp/guzzle": "^6.5"
     }
 }
