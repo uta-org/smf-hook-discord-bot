@@ -1,5 +1,12 @@
 <?php
 
+require __DIR__.'/../composer-yasmin/vendor/autoload.php';
+require 'db/db.conn.php';
+require 'funcs/db.funcs.php';
+require 'funcs/string.funcs.php';
+require 'funcs/run.funcs.php';
+require 'funcs/misc.funcs.php';
+
 define('LOCK_FILE', "/var/run/" . basename($argv[0], ".php") . ".lock");
 
 if (!tryLock())
@@ -13,13 +20,6 @@ register_shutdown_function('unlink', LOCK_FILE);
 $pid = getmypid();
 echo "Hello world! Your PID is: ".$pid."\n";
 file_put_contents('pid.txt', $pid);
-
-require __DIR__.'/../composer-yasmin/vendor/autoload.php';
-require 'db/db.conn.php';
-require 'funcs/db.funcs.php';
-require 'funcs/string.funcs.php';
-require 'funcs/run.funcs.php';
-require 'funcs/misc.funcs.php';
 
 $loop = \React\EventLoop\Factory::create();
 $client = new \CharlotteDunois\Yasmin\Client(array(), $loop);
