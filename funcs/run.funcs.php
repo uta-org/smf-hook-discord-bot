@@ -140,7 +140,7 @@ function runLoop($url, $channel) {
     if(count($divs) != count($tables)) 
     {
         $channel->send(':stop_sign: Error ocurred on the server side!');
-        echo 'Div count is not the same of table count! ('.count($divs).' != '.count($tables).')'.PHP_EOL;
+        echo 'Div count is not the same of table count! ('.count($divs).' != '.count($tables).') on '.$url.PHP_EOL;
         return;
     }
 
