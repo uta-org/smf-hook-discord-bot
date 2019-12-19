@@ -8,7 +8,7 @@ use PHPHtmlParser\CurlInterface;
 function getLoop($response, $browser) {
 	$loop = React\EventLoop\Factory::create();
 
-	$loop->addPeriodicTimer(5, function () {
+	$loop->addPeriodicTimer(5, function () use($response) {
 	    var_dump($response->headers());
         // $browser->close();
         // $loop->stop();
