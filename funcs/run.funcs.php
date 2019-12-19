@@ -47,7 +47,7 @@ function startListening($db, $client, $message, $params) {
 			$stmt->execute([$id, $smf_url, $board_id]);
 
 			$last_instance_id = $db->lastInsertId();
-            runCrawler($db, $client, $last_instance_id);
+            runCrawler($db, $client, $message->channel, $last_instance_id);
 
             /*
 			$sqlNews = "INSERT INTO smf_discord_instances (channel_id, smf_url, board_id) VALUES (?, ?, ?)";
@@ -63,7 +63,7 @@ function startListening($db, $client, $message, $params) {
             // $last_id = $stmt->fetchColumn();
 
             $last_instance_id = $row["id"];
-            runCrawler($db, $client, $last_instance_id);
+            runCrawler($db, $client, $message->channel, $last_instance_id);
     	}
     }
     catch(Exception $e) {
@@ -96,10 +96,15 @@ function getAllChannelIds($client) {
     return $ids;
 }
 
-function runCrawler($db, $client, $instance_id) {
+function runCrawler($db, $client, $channel, $instance_id) {
     // global $loop;
 
 	$instance_data = getResult($db, 'smf_discord_instances', 'id=?', $instance_id);
+
+    if(!$instance_data) {
+        $channel->send(":stop_sign: Can't run the crawler because can't get instance from id (".$instance_id.")!");
+        return;        
+    }
 
 	$smf_url = $instance_data['smf_url'];
 	$board_id = $instance_data['board_id'];
