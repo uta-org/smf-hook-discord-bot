@@ -29,7 +29,7 @@ function getDom($url) {
 
 class ParseClient implements CurlInterface
 {
-    public function get($url)
+    public function get($url) : string
     {
         $client = new Client();
 
