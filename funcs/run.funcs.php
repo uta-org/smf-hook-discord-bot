@@ -32,8 +32,13 @@ function startListening($db, $client, $message, $params) {
     	// If not, then add it to the database
 
     	$ids = getAllChannelIds($client);
+
     	// `isAnyChannelAlreadyListened` func
-    	$isEmpty = !getResult($db, 'smf_discord_instances', concatSqlWhere($ids), $ids, 'id');
+        $where_clause = concatSqlWhere($ids);
+
+        echo $where_clause;
+        print_r($ids);
+    	$isEmpty = !getResult($db, 'smf_discord_instances', $where_clause, $ids, 'id');
 
     	if($isEmpty) {
 			$sqlInstances = "INSERT INTO smf_discord_instances (channel_id, smf_url, board_id) VALUES (?, ?, ?)";
