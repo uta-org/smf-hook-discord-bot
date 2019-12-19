@@ -1,6 +1,6 @@
 <?php
 
-require 'db.settings.user.php';
+require __DIR__.'/db.settings.user.php';
 
 try{
 	$db = new PDO("mysql:host=".$db_host.";dbname=".$db_name.";port=".$db_port, $db_username, $db_password);
