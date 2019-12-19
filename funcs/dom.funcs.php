@@ -16,7 +16,7 @@ function getLoop($response) {
 }
 
 function getContents($url) {
-        $puppeteer = new Puppeteer;
+        $puppeteer = new Puppeteer(['idle_timeout' => 10]);
         $browser = $puppeteer->launch([
                 'args' => ['--no-sandbox', '--disable-setuid-sandbox']
         ]);
