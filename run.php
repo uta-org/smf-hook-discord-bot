@@ -35,7 +35,7 @@ $client->on('ready', function () use ($client) {
     // getCachedChannels($client);
 });
 
-$client->on('message', function ($message) {
+$client->on('message', function ($message) use($client, $db) {
     echo 'Received Message from '.$message->author->tag.' in '.($message->channel instanceof \CharlotteDunois\Yasmin\Interfaces\DMChannelInterface ? 'DM' : 'channel #'.$message->channel->name ).' with '.$message->attachments->count().' attachment(s) and '.\count($message->embeds).' embed(s)'.PHP_EOL;
 
     /*if($message->content === '$ping') {
