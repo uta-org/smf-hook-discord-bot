@@ -7,6 +7,9 @@ function getResult($db, $table_name, $condition, $data, $columns = '*')
 	// global $i, $debug;
 	global $i;
 
+	if(!is_array($data))
+		$data = [$data];
+
 	$sql = 'SELECT '.$columns.' FROM '.$table_name.' WHERE '.$condition;
 
 	/*
