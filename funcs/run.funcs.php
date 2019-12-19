@@ -37,27 +37,34 @@ function startListening($db, $client, $message, $params) {
 
     	// `isAnyChannelAlreadyListened` func
         $where_clause = concatSqlWhere($ids);
-    	$isEmpty = !getResult($db, 'smf_discord_instances', $where_clause, $ids, 'id');
+
+        $row = getResult($db, 'smf_discord_instances', $where_clause, $ids, 'id');
+    	$isEmpty = !$row;
 
     	if($isEmpty) {
 			$sqlInstances = "INSERT INTO smf_discord_instances (channel_id, smf_url, board_id) VALUES (?, ?, ?)";
 			$stmt = $db->prepare($sqlInstances);
 			$stmt->execute([$id, $smf_url, $board_id]);
 
-			/*
 			$last_instance_id = $db->lastInsertId();
+            runCrawler($db, $client, $last_instance_id);
 
+            /*
 			$sqlNews = "INSERT INTO smf_discord_instances (channel_id, smf_url, board_id) VALUES (?, ?, ?)";
 			$stmt = $db->prepare($sqlInstances);
 			$stmt->execute([$id, $smf_url, $board_id]);
 			*/
+
+            $message->channel->send('Listening to channel #'.$message->channel->name.'!');
     	} else {
     		$message->channel->send(':stop_sign: You are already listening to a channel, please use `$set channel` to focus on a new channel!');
-    	}
 
-        $message->channel->send('Listening to channel #'.$message->channel->name.'!');
-        // $message->channel->send('You need to contigure this by using `$listen-board <url> <board_id>`.');
-        // $message->channel->send('Example: `$listen-board https://foro.elhacker.net/ 34`');
+            // $stmt = $db->query("SELECT LAST_INSERT_ID() FROM smf_discord_instances");
+            // $last_id = $stmt->fetchColumn();
+
+            $last_instance_id = $row["id"];
+            runCrawler($db, $client, $last_instance_id);
+    	}
     }
     catch(Exception $e) {
         promptException($message, $e);
@@ -125,14 +132,16 @@ function runLoop($url, $channel) {
 
     $data = array();
 
-    if(count($divs) != count($tables)) {
+    if(count($divs) != count($tables)) 
+    {
         $channel->send(':stop_sign: Error ocurred on the server side!');
         echo 'Div count is not the same of table count! ('.count($divs).' != '.count($tables).')'.PHP_EOL;
         return;
     }
 
     $j = 0;
-    for ($i=0; $i < count($divs); $i++) {
+    for ($i=0; $i < count($divs); $i++) 
+    {
         // TODO: Get id from link (discord_bot_news), then if id from last new is less than the actual id then continue
 
         $div = $divs[$i];
@@ -156,12 +165,15 @@ function runLoop($url, $channel) {
         ++$j;
     }
 
-    for ($k=0; $k < $j; $k++) { 
+    for ($k=0; $k < $j; $k++) 
+    { 
         echo "[".$k."] Publishing new! Data: ".PHP_EOL.print_r($data[$k], true).PHP_EOL.PHP_EOL;
+
         $new = ":notepad_spiral: [".$data[$k]["title"]."](".$data[$k]["url"].")".PHP_EOL.PHP_EOL;
         $new .= $data[$k]["description"].PHP_EOL;
         $new .= "[Leer más](".$data[$k]["url"].")".PHP_EOL;
-        $new .= "Noticia publicada **".$data[$k]["published_at"]."** por [".$data[$k]["username"]."](".$data[$k]["user_url"].")";
+        $new .= "Noticia publicada **".$data[$k]["published_at"]."** por [".$data[$k]["username"]."](".$data[$k]["user_url"].")".PHP_EOL;
+        $new .= "-----------------------------";
 
         $channel->send($new);   
     }
