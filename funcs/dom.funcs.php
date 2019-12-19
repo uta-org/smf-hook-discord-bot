@@ -5,6 +5,16 @@ use Nesk\Rialto\Data\JsFunction;
 use PHPHtmlParser\Dom;
 use PHPHtmlParser\CurlInterface;
 
+function getLoop($response) {
+	$loop = React\EventLoop\Factory::create();
+
+	$loop->addPeriodicTimer(5, function () {
+	    var_dump($response->headers());
+	});
+
+	return $loop;
+}
+
 function getContents($url) {
         $puppeteer = new Puppeteer;
         $browser = $puppeteer->launch([
@@ -14,8 +24,9 @@ function getContents($url) {
         $page = $browser->newPage();
         $response = $page->goto($url);
 
+        getLoop($response)->run();
         $contents = $page->content();
-        var_dump($response->headers());
+        // var_dump($response->headers());
 
         $browser->close();
 
