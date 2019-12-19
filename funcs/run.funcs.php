@@ -90,12 +90,14 @@ function runCrawler($db, $client, $instance_id) {
 	$board_id = $instance_data['board_id'];
 
 	$crawl_url = appendSlash($smf_url).'-b'.$board_id.'.0';
-
 	$channel = getChannelById($client, $instance_data['channel_id']);
 
 	// TODO: Create infinite loop to crawl data, but first create an example where the last topic is output
+    runLoop($crawl_url, $channel);	
+}
 
-	
+function runLoop($url, $channel) {
+
 }
 
 /*
