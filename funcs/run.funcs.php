@@ -2,12 +2,12 @@
 
 function startListening($db, $client, $message, $params) {
     try {
-    	if(null !== @$params[0]) {
+    	if(null === @$params[0]) {
     		$message->channel->send(':stop_sign: Empty argument #0 passed!');
     		return;
     	}
 
-    	if(null !== @$params[1]) {
+    	if(null === @$params[1]) {
     		$message->channel->send(':stop_sign: Empty argument #1 passed!');
     		return;
     	}
