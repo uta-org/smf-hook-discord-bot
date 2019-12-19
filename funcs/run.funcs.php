@@ -17,7 +17,7 @@ function startListening($db, $client, $message, $params) {
     		return;
     	}
 
-    	if(!is_int(@$params[1])) {
+    	if(!is_numeric(@$params[1])) {
     		$message->channel->send(':stop_sign: Param #1 is not an integer!');
     		return;
     	}
