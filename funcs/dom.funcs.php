@@ -3,6 +3,7 @@
 use Nesk\Puphpeteer\Puppeteer;
 use Nesk\Rialto\Data\JsFunction;
 use PHPHtmlParser\Dom;
+use PHPHtmlParser\CurlInterface;
 
 function getContents($url) {
         $puppeteer = new Puppeteer;
