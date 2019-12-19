@@ -172,7 +172,7 @@ function runLoop($url, $channel) {
         $new = ":notepad_spiral: [".$data[$k]["title"]."](".$data[$k]["url"].")".PHP_EOL.PHP_EOL;
         $new .= $data[$k]["description"].PHP_EOL;
         $new .= "[Leer más](".$data[$k]["url"].")".PHP_EOL;
-        $new .= "Noticia publicada **".$data[$k]["published_at"]."** por [".$data[$k]["username"]."](".$data[$k]["user_url"].")".PHP_EOL;
+        $new .= "Noticia publicada **".$data[$k]["published_at"]."** por [".$data[$k]["username"]."](".$data[$k]["user_url"].")".PHP_EOL.PHP_EOL;
         $new .= "-----------------------------";
 
         $channel->send($new);   
