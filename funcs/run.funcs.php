@@ -75,6 +75,8 @@ function getChannelById($client, $id) {
 }
 
 function getAllChannelIds($client) {
+    // TODO: Use PHP Linq
+    
 	$ids = array();
 
     foreach ($client->channels->all() as $channel) 
@@ -86,6 +88,8 @@ function getAllChannelIds($client) {
 }
 
 function runCrawler($db, $client, $instance_id) {
+    // global $loop;
+
 	$instance_data = getResult($db, 'smf_discord_instances', 'id=?', $instance_id);
 
 	$smf_url = $instance_data['smf_url'];
@@ -97,6 +101,16 @@ function runCrawler($db, $client, $instance_id) {
 	// TODO: Create infinite loop to crawl data, but first create an example where the last topic is output
     runLoop($crawl_url, $channel);	
 }
+
+/*
+// [1]
+$loop = React\EventLoop\Factory::create();
+
+// [2]
+$loop->addPeriodicTimer(5 * 60, function () {
+    echo "Tick\n";
+});
+*/
 
 function runLoop($url, $channel) {
 
