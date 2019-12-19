@@ -19,7 +19,7 @@ function getParams($raw_command) {
 	return array_slice(explode(" ", $raw_command), 1);
 }
 
-function concatSqlWhere($channels, $param) {
+function concatSqlWhere($channels) {
     $str = "";
 
     for ($i = 0; $i < count($channels); $i++) { 
