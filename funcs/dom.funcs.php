@@ -11,8 +11,11 @@ use PHPHtmlParser\CurlInterface;
 function getLoop($page, $browser, $callback) {
 	$loop = React\EventLoop\Factory::create();
 
-	$loop->addPeriodicTimer(6, function () use($page, $browser, $callback) {
-        $callback($page->content());
+	$loop->addPeriodicTimer(10, function () use($page, $browser, $callback) {
+		$contents = $page->content();
+
+		echo $contents;
+        $callback($contents);
         $loop->stop();
         $browser->close();
 	});
