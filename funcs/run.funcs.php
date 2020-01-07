@@ -130,7 +130,9 @@ $loop->addPeriodicTimer(5 * 60, function () {
 
 function runLoop($url, $channel) {
     getDomFromContents($url, function($dom) use($url, $channel) {
-        echo "Getting DOM with ".strlen($dom->outerHtml)." bytes (title: ".$dom->find("meta[name='title']")->text.")".PHP_EOL;
+        echo "Getting DOM with ".strlen($dom->outerHtml)." bytes";
+        
+        // " (title: ".$dom->find("meta[name='title']")->text.")".PHP_EOL;
 
         file_put_contents("ssi_test.html", $dom->outerHtml);
 
