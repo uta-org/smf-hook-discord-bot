@@ -130,8 +130,8 @@ $loop->addPeriodicTimer(5 * 60, function () {
 
 function runLoop($url, $channel) {
     getDomFromContents($url, function($dom) use($url, $channel) {
-        echo "Getting DOM with ".strlen($dom->outerHtml)." bytes";
-        
+        echo "Getting DOM with ".strlen($dom->outerHtml)." bytes".PHP_EOL;
+
         // " (title: ".$dom->find("meta[name='title']")->text.")".PHP_EOL;
 
         file_put_contents("ssi_test.html", $dom->outerHtml);
@@ -157,10 +157,21 @@ function runLoop($url, $channel) {
             $table = $tables[$i];
 
             $title_a = $div->find("a")[0];
-            $table_contents = $table->find("font")[0]->find("b")[0];
+            $table_contents = $table->find("font")[0];
 
-            $published_date = $table_contents->text;
-            $published_date .= $table_contents->nextSibling()->text;
+            /*
+
+            $matches = array();
+            preg_match('/id=([0-9]+)\?/', $url, $matches);
+
+            */
+            // Noticia publicada 26 Diciembre 2019, 01:42 por wolfbcn
+            // ->find("b")[0];
+
+            $matches = array();
+            preg_match('/\d+ (Enero|Febrero|Marzo|Abril|Mayo|Junio|Julio|Agosto|Septiembre|Octubre|Noviembre|Diciembre) \d+, \d+:\d+/', $table_contents->text, $matches);
+
+            $published_date = $matches[0];
 
             $user_element = $table_contents->nextSibling();
 
@@ -186,6 +197,8 @@ function runLoop($url, $channel) {
 
             $channel->send($new);   
         }
+
+        // TODO: Send to database
     });
 }
 
