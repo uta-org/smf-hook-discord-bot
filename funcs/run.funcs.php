@@ -172,8 +172,7 @@ function runLoop($url, $channel) {
             preg_match('/\d+ (Enero|Febrero|Marzo|Abril|Mayo|Junio|Julio|Agosto|Septiembre|Octubre|Noviembre|Diciembre) \d+, \d+:\d+/', $table_contents->text, $matches);
 
             $published_date = $matches[0];
-
-            $user_element = $table_contents->nextSibling();
+            $user_element = $table_contents->find("a")[0];
 
             $data[$j]["title"] = $title_a->text;
             $data[$j]["url"] = $title_a->getAttribute('href');
