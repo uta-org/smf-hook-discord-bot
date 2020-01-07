@@ -14,7 +14,7 @@ function getLoop($page, $browser, $callback) {
 	$loop->addPeriodicTimer(10, function () use($page, $browser, $callback) {
 		$contents = $page->content();
 
-		echo $contents;
+		// echo $contents;
         $callback($contents);
         $loop->stop();
         $browser->close();
@@ -22,12 +22,6 @@ function getLoop($page, $browser, $callback) {
 
 	return $loop;
 }
-
-
-/*function internalGetContent($page, $callback) {
-	sleep(7);
-	$callback($page->content());
-}*/
 
 function getContents($url, $callback) {
         $puppeteer = new Puppeteer(['read_timeout' => 20]);
@@ -68,8 +62,7 @@ class ParseClient implements CurlInterface
         return $client->request('GET', $url, [
             'headers' => [
                 'User-Agent' => 'testing/1.0',
-            ],
-            // 'proxy' => 'http://202.56.203.40:80'
+            ]
         ])->getBody();
     }
 }
