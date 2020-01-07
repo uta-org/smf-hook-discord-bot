@@ -24,7 +24,9 @@ function getContents($url) {
         ]);
 
         $page = $browser->newPage();
-        $response = $page->goto($url);
+        $response = $page->goto($url, [
+    		'timeout' => 15000, // In milliseconds
+		]);
 
         getLoop($response, $browser)->run();
         $contents = $page->content();
