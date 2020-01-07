@@ -1,10 +1,13 @@
 <?php
 
+require_once __DIR__.'/../libs/php-thread/Thread.php';
+
 use Nesk\Puphpeteer\Puppeteer;
 use Nesk\Rialto\Data\JsFunction;
 use PHPHtmlParser\Dom;
 use PHPHtmlParser\CurlInterface;
 
+/*
 function getLoop($response, $browser, $page) {
 	$loop = React\EventLoop\Factory::create();
 
@@ -18,8 +21,14 @@ function getLoop($response, $browser, $page) {
 
 	return $loop;
 }
+*/
 
-function getContents($url) {
+function internalGetContent($page, &$contents) {
+	sleep(7);
+	$contents = $page->content();
+}
+
+function getContents($url, &$contents) {
         $puppeteer = new Puppeteer(['read_timeout' => 20]);
         $browser = $puppeteer->launch([
                 'args' => ['--no-sandbox', '--disable-setuid-sandbox']
@@ -30,19 +39,25 @@ function getContents($url) {
     		'timeout' => 15000, // In milliseconds
 		]);
 
-        sleep(7);
+		// create 2 thread objects
+		$t1 = new Thread( 'internalGetContent' );
 
-        // getLoop($response, $browser, $page)->run();
-        $contents = $page->content();
-
-        // var_dump($response->headers());
-
+		// start them
+		$t1->start($page, $contents);
 		$browser->close();
-        return $contents;
+
+		return $t1;
 }
 
 function getDomFromContents($url) {
-	$contents = getContents($url);
+	$contents = "";
+	$t1 = getContents($url, $contents);
+
+	while( $t1->isAlive() ) {
+		echo "Waiting for DOM...".PHP_EOL;
+		sleep(1);
+	}
+
 	$dom = new Dom;
 	$dom->load($contents);
 

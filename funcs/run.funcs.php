@@ -135,7 +135,7 @@ function runLoop($url, $channel) {
     //$dom->loadFromUrl($url);
     
     $dom = getDomFromContents($url);
-    echo "Getting DOM with ".strlen($dom->outerHtml)." bytes (title: ".$dom->find("meta[name='title']")->text.")";
+    echo "Getting DOM with ".strlen($dom->outerHtml)." bytes (title: ".$dom->find("meta[name='title']")->text.")".PHP_EOL;
 
     file_put_contents("ssi_test.html", $dom->outerHtml);
 
