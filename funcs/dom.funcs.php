@@ -41,7 +41,7 @@ function getContents($url, $callback) {
 }
 
 function getDomFromContents($url, $callback) {
-	getContents($url, $contents, function($contents) {
+	getContents($url, function($contents) {
 		$dom = new Dom;
 		$dom->load($contents);
 		$callback($dom);
