@@ -18,7 +18,7 @@ function getLoop($response, $browser) {
 }
 
 function getContents($url) {
-        $puppeteer = new Puppeteer(['idle_timeout' => 10]);
+        $puppeteer = new Puppeteer(['read_timeout' => 20]);
         $browser = $puppeteer->launch([
                 'args' => ['--no-sandbox', '--disable-setuid-sandbox']
         ]);
@@ -30,7 +30,7 @@ function getContents($url) {
         $contents = $page->content();
         // var_dump($response->headers());
 
-
+		// $browser->close();
         return $contents;
 }
 
