@@ -30,7 +30,7 @@ function getContents($url) {
     		'timeout' => 15000, // In milliseconds
 		]);
 
-        getLoop($response, $browser)->run();
+        getLoop($response, $browser, $page)->run();
         $contents = $page->content();
         // var_dump($response->headers());
 
