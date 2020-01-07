@@ -55,7 +55,13 @@ function appendSlash($str) {
 	return $str.'/';
 }
 
-function nl2br2($string) {
-    $string = str_replace(array("\r\n", "\r", "\n"), "<br />", $string);
-    return $string;
+/**
+* Convert BR tags to nl
+*
+* @param string The string to convert
+* @return string The converted string
+*/
+function br2nl($string)
+{
+    return preg_replace('/\<br(\s*)?\/?\>/i', "\n", $string);
 }
