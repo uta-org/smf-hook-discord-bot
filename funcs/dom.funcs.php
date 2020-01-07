@@ -23,9 +23,9 @@ function getLoop($response, $browser, $page) {
 }
 */
 
-function internalGetContent($page, &$contents) {
+function internalGetContent($page, $callback) {
 	sleep(7);
-	$contents = $page->content();
+	$callback($page->content());
 }
 
 function getContents($url, &$contents) {
@@ -39,11 +39,18 @@ function getContents($url, &$contents) {
     		'timeout' => 15000, // In milliseconds
 		]);
 
+		// test to see if threading is available
+		if( ! Thread::isAvailable() ) {
+		    die( 'Threads not supported' );
+		}
+
 		// create 2 thread objects
 		$t1 = new Thread( 'internalGetContent' );
 
 		// start them
-		$t1->start($page, $contents);
+		$t1->start($page, function($c) use(&$contents) {
+			$contents = $c;
+		});
 		$browser->close();
 
 		return $t1;
