@@ -5,13 +5,15 @@ use Nesk\Rialto\Data\JsFunction;
 use PHPHtmlParser\Dom;
 use PHPHtmlParser\CurlInterface;
 
-function getLoop($response, $browser) {
+function getLoop($response, $browser, $page) {
 	$loop = React\EventLoop\Factory::create();
 
-	$loop->addPeriodicTimer(5, function () use($response) {
-	    var_dump($response->headers());
+	$loop->addPeriodicTimer(10, function () use($response, $page) {
+	    // var_dump($response->headers());
         // $browser->close();
         // $loop->stop();
+
+        echo $page->content();
 	});
 
 	return $loop;
