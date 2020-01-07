@@ -1,3 +1,0 @@
-[submodule "libs/php-thread"]
-	path = libs/php-thread
-	url = https://github.com/motanelu/php-thread.git
