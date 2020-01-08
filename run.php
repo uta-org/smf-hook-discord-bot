@@ -7,6 +7,7 @@ require 'funcs/dom.funcs.php';
 require 'funcs/string.funcs.php';
 require 'funcs/run.funcs.php';
 require 'funcs/misc.funcs.php';
+require 'funcs/test.funcs.php';
 
 define('LOCK_FILE', "/var/run/" . basename($argv[0], ".php") . ".lock");
 
