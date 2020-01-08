@@ -49,6 +49,10 @@ $client->on('message', function ($message) use($client, $db) {
     if(startsWith($contents, '$start')) {
         startListening($db, $client, $message, getParams($contents));
     }
+
+    if($contents === '$embed') {
+        sendEmbedMessage($message->channel);
+    }
 });
 
 $token = getenv("SMF_TOKEN");
