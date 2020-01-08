@@ -129,66 +129,67 @@ $loop->addPeriodicTimer(5 * 60, function () {
 */
 
 function runLoop($url, $channel) {
-    // TODO: Add pupeeter method
+    getDomFromContents($url, function($dom) use($url, $channel) {
+        echo "Getting DOM with ".strlen($dom->outerHtml)." bytes".PHP_EOL;
 
-    //$dom = new Dom;
-    //$dom->loadFromUrl($url);
-    
-    $dom = getDomFromContents($url);
+        // " (title: ".$dom->find("meta[name='title']")->text.")".PHP_EOL;
 
-    file_put_contents("ssi_test.html", $dom->outerHtml);
+        file_put_contents("ssi_test.html", $dom->outerHtml);
 
-    $divs = $dom->find("div");    
-    $tables = $dom->find("table");
+        $divs = $dom->find("div");    
+        $tables = $dom->find("table");
 
-    $data = array();
+        $data = array();
 
-    if(count($divs) != count($tables)) 
-    {
-        $channel->send(':stop_sign: Error ocurred on the server side!');
-        echo 'Div count is not the same of table count! ('.count($divs).' != '.count($tables).') on '.$url.PHP_EOL;
-        return;
-    }
+        if(count($divs) != count($tables)) 
+        {
+            $channel->send(':stop_sign: Error ocurred on the server side!');
+            echo 'Div count is not the same of table count! ('.count($divs).' != '.count($tables).') on '.$url.PHP_EOL;
+            return;
+        }
 
-    $j = 0;
-    for ($i=0; $i < count($divs); $i++) 
-    {
-        // TODO: Get id from link (discord_bot_news), then if id from last new is less than the actual id then continue
+        $j = 0;
+        for ($i=0; $i < count($divs); $i++) 
+        {
+            // TODO: Get id from link (discord_bot_news), then if id from last new is less than the actual id then continue
 
-        $div = $divs[$i];
-        $table = $tables[$i];
+            $div = $divs[$i];
+            $table = $tables[$i];
 
-        $title_a = $div->find("a")[0];
-        $table_contents = $table->find("font")[0]->find("b")[0];
+            $title_a = $div->find("a")[0];
+            $table_contents = $table->find("font")[0];
 
-        $published_date = $table_contents->text;
-        $published_date .= $table_contents->nextSibling()->text;
+            $matches = array();
+            preg_match('/\d+ (Enero|Febrero|Marzo|Abril|Mayo|Junio|Julio|Agosto|Septiembre|Octubre|Noviembre|Diciembre) \d+, \d+:\d+/', $table_contents->text, $matches);
 
-        $user_element = $table_contents->nextSibling();
+            $published_date = $matches[0];
+            $user_element = $table_contents->find("a")[0];
 
-        $data[$j]["title"] = $title_a->text;
-        $data[$j]["url"] = $title_a->getAttribute('href');
-        $data[$j]["description"] = br2nl($div->find("font")[0]->innerHtml);
-        $data[$j]["published_at"] = $published_date;
-        $data[$j]["user_url"] = $user_element->getAttribute("href");
-        $data[$j]["username"] = $user_element->text;
+            $data[$j]["title"] = $title_a->text;
+            $data[$j]["url"] = $title_a->getAttribute('href');
+            $data[$j]["description"] = br2nl($div->find("font")[0]->innerHtml);
+            $data[$j]["published_at"] = $published_date;
+            $data[$j]["user_url"] = $user_element->getAttribute("href");
+            $data[$j]["username"] = $user_element->text;
 
-        ++$j;
-    }
+            ++$j;
+        }
 
-    for ($k=0; $k < $j; $k++) 
-    { 
-        echo "[".$k."] Publishing new! Data: ".PHP_EOL.print_r($data[$k], true).PHP_EOL.PHP_EOL;
+        for ($k=0; $k < $j; $k++) 
+        { 
+            echo "[".$k."] Publishing new! Data: ".PHP_EOL.print_r($data[$k], true).PHP_EOL.PHP_EOL;
 
-        $new = ":notepad_spiral: [".$data[$k]["title"]."](".$data[$k]["url"].")".PHP_EOL.PHP_EOL;
-        $new .= $data[$k]["description"].PHP_EOL;
-        $new .= "[Leer más](".$data[$k]["url"].")".PHP_EOL;
-        $new .= "Noticia publicada **".$data[$k]["published_at"]."** por [".$data[$k]["username"]."](".$data[$k]["user_url"].")".PHP_EOL.PHP_EOL;
-        $new .= "-----------------------------";
+            $new = ":notepad_spiral: [".$data[$k]["title"]."](".$data[$k]["url"].")".PHP_EOL.PHP_EOL;
+            $new .= $data[$k]["description"].PHP_EOL;
+            $new .= "[Leer más](".$data[$k]["url"].")".PHP_EOL;
+            $new .= "Noticia publicada **".$data[$k]["published_at"]."** por [".$data[$k]["username"]."](".$data[$k]["user_url"].")".PHP_EOL.PHP_EOL;
+            $new .= "-----------------------------";
 
-        $channel->send($new);   
-    }
+            $channel->send($new);   
+        }
 
+        // TODO: Send to database
+    });
 }
 
 /*
