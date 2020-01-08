@@ -1,13 +1,13 @@
 <?php
 
 function sendEmbedMessage($channel) {
-     $embed = new \CharlotteDunois\Yasmin\Models\MessageEmbed();
+    $embed = new \CharlotteDunois\Yasmin\Models\MessageEmbed();
             
     // Build the embed
     $embed
         ->setTitle('A new Rich Embed')                                                       // Set a title
         ->setColor(random_int(0, 16777215))                                                  // Set a color (the thing on the left side)
-        ->setDescription(':)')                                                               // Set a description (below title, above fields)
+        ->setDescription(':) [test](http://google.com)')                                                               // Set a description (below title, above fields)
         ->addField('Test', 'Value')                                                          // Add one field
         ->addField('Test 2', 'Value 2', true)                                                // Add one inline field
         ->addField('Test 3', 'Value 3', true)                                                // Add another inline field
