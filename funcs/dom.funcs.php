@@ -5,11 +5,12 @@ use Nesk\Rialto\Data\JsFunction;
 use PHPHtmlParser\Dom;
 use PHPHtmlParser\CurlInterface;
 
-function getLoop($response, $browser) {
+function getLoop($response, $browser, $page) {
 	$loop = React\EventLoop\Factory::create();
 
-	$loop->addPeriodicTimer(5, function () use($response) {
+	$loop->addPeriodicTimer(5, function () use($response, $browser, $page) {
 	    var_dump($response->headers());
+	    echo getTitle($page->content()).PHP_EOL;
         // $browser->close();
         // $loop->stop();
 	});
@@ -26,7 +27,7 @@ function getContents($url) {
         $page = $browser->newPage();
         $response = $page->goto($url);
 
-        getLoop($response, $browser)->run();
+        getLoop($response, $browser, $page)->run();
         $contents = $page->content();
         // var_dump($response->headers());
 
@@ -40,6 +41,13 @@ function getDomFromContents($url) {
 	$dom->load($contents);
 
 	return $dom;
+}
+
+function getTitle($contents) {
+	$dom = new Dom;
+	$dom->load($contents);
+
+	return $dom->find('title')->text;
 }
 
 // Not working on Forums with Cloudflare protection
