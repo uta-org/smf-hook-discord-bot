@@ -175,8 +175,8 @@ function runLoop($url, $message, $channelInstance) {
         for ($k = 0; $k < $j; $k++) 
         {
             $new_url = $data[$k]["url"];
-
             getDomFromUrl($new_url, $message, function($dom) use($new_url, $data, $k, $channelInstance) {
+                echo "Getting dom from new (".$new_url.")...".PHP_EOL;
                 $avatar = getAvatar($dom);
 
                 $original_newurl = getOriginalUrl($dom); // Only used for screenshot
@@ -197,6 +197,8 @@ function sendMessageFromData($channel, $adata, $index) {
     $data["footer"] = "Noticia publicada **".$data[$k]["published_at"]."** por [".$data[$k]["username"]."](".$data[$k]["user_url"].")".PHP_EOL.PHP_EOL;
 
     // sendMessage($channel, $title, $description, $image, $author, $author_avatar, $footer, $url);
+
+    echo "Sending message for index '".$index."'...".PHP_EOL;
     sendMessage($channel, $data["title"], $data["description"], $data["screenshot"], $data["username"], $data["avatar"], $data["footer"], $data["url"]);
 
     // TODO: Send to database
@@ -230,10 +232,8 @@ function getScreenshot($new_url) {
     $relative_url = 'screenshots/'. uniqid(rand(), true) . '.png';
     $filename = __DIR__ . '/../public_html/'.$relative_url;
 
-    $puppeteer = new Puppeteer;
-    $browser = $puppeteer->launch();
-
-    $page = $browser->newPage();
+    echo "Creating screenshot...".PHP_EOL;
+    $page = launchPuppeteer(null);
     $page->goto($new_url);
     $page->screenshot(['path' => $filename]);
 
