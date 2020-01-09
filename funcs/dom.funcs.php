@@ -38,7 +38,7 @@ function getLoop($page, $callback) {
 
 	$loopInstance = React\EventLoop\Factory::create();
 
-	$loopInstance->addPeriodicTimer(10, function () use($page, $currentUrl, $callback) {
+	$loopInstance->addPeriodicTimer(10, function () use($page, $currentUrl, $callback, $loopInstance) {
 		$contents = $page->content();
         echo "Getting DOM with ".strlen($contents)." bytes (".$currentUrl.")".PHP_EOL;
 
