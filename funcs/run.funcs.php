@@ -207,10 +207,11 @@ function transformDescription($data) {
 }
 
 function getDomFromUrl($new_url, $message, $callback) {
-    getDomFromContents($new_url, $message, false, function($dom) use($callback) {
+    getDomFromContents($new_url, $message, false, function($dom) use($callback, $new_url) {
         // echo "Dom obtained in run.funcs.php:".PHP_EOL.PHP_EOL.print_r($dom, true).PHP_EOL;
 
-        $filename = filter_filename($new_url);
+        $filename = substr($new_url, strrpos($new_url, '/') + 1);
+        $filename = filter_filename($filename);
 
         file_put_contents("html/".$filename, $dom->outerHtml);
         $callback($dom);
