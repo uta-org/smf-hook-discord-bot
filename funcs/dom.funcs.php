@@ -8,15 +8,19 @@ use PHPHtmlParser\CurlInterface;
 $puppeteerInstance = null;
 $browserInstance = null;
 $loopInstance = null;
+$pageInstance = null;
+
+$queue = new \Ds\Queue();
+$runningLoop = false;
 
 // Use this function all the time we need to launch puppeteer
 function launchPuppeteer($args, $disable = false) {
-    global $puppeteerInstance, $browserInstance;
+    global $puppeteerInstance, $browserInstance, $pageInstance, $queue;
 
     // bugfix: Don't create instance if it's already created!
-    if(isset($puppeteerInstance) && isset($browserInstance)) {
+    if(isset($puppeteerInstance) && isset($browserInstance) && isset($pageInstance)) {
         echo "Reusing instance...".PHP_EOL;
-        return $browserInstance;
+        return $pageInstance;
     }
 
     $arg = $disable ? ['--no-sandbox', '--disable-setuid-sandbox'] : ['--no-sandbox'];
@@ -26,37 +30,50 @@ function launchPuppeteer($args, $disable = false) {
                'headless' => true
     ]);
 
-    return $browserInstance;
+    $pageInstance = $browser->newPage();
+
+    return $pageInstance;
 }
 
 function getLoop($page, $browser, $callback) {
-    // TODO: Add queue and dequeue request
-    global $loopInstance;
+    global $loopInstance, $queue, $runningLoop;
 
+    $runningLoop = true;
 	$loopInstance = React\EventLoop\Factory::create();
 
-	$loopInstance->addPeriodicTimer(10, function () use($page, $browser, $callback) {
+	$loopInstance->addPeriodicTimer(10, function () use($page, $callback, $queue) {
 		$contents = $page->content();
 
-		// echo $contents;
         $callback($contents);
-        // $loop->stop();
-        $browser->close();
+
+        if($queue->count() > 0) {
+            $url = $queue->pop();
+            $page->goto($url, [
+                'timeout' => 15000, // In milliseconds
+            ]);
+        }
 	});
 
 	return $loopInstance;
 }
 
 function getContents($url, $message, $disable, $callback) {
+    global $queue, $runningLoop;
+
     $browser = null;
     try {
-        $browser = launchPuppeteer(['read_timeout' => 20], $disable);
+        $page = launchPuppeteer(['read_timeout' => 20], $disable);
 
-        $page = $browser->newPage();
-        $response = $page->goto($url, [
-    		'timeout' => 15000, // In milliseconds
-		]);
+        if($runningLoop) {
+            $queue->push($url);
+        }
 
+        if($queue->count() == 0) {
+            $page->goto($url, [
+        		'timeout' => 15000, // In milliseconds
+    		]);
+        }
+    
         echo "Waiting 10 seconds to Cloudflare for url '".$url."'...".PHP_EOL;
 
         if(!isset($loopInstance))
