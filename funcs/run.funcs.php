@@ -228,13 +228,13 @@ function getOriginalUrl($dom) {
     return $dom->find('.post')[0]->find('a')->getAttribute('href');
 }
 
-function getScreenshot($new_url) {
+function getScreenshot($url) {
     $relative_url = 'screenshots/'. uniqid(rand(), true) . '.png';
     $filename = __DIR__ . '/../public_html/'.$relative_url;
 
-    echo "Creating screenshot...".PHP_EOL;
+    echo "Creating screenshot for url (".$url.")...".PHP_EOL;
     $page = launchPuppeteer(null);
-    $page->goto($new_url);
+    $page->goto($url);
     $page->screenshot(['path' => $filename]);
 
     $browser->close();
