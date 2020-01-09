@@ -172,8 +172,11 @@ function runLoop($url, $message, $channelInstance) {
             ++$j;
         }
 
+        echo PHP_EOL.print_r($data, true).PHP_EOL;
+
         for ($k = 0; $k < $j; $k++) 
         {
+            // TODO: Batch downloads
             $new_url = $data[$k]["url"];
             getDomFromUrl($new_url, $message, function($dom) use($new_url, $data, $k, $channelInstance) {
                 echo "Getting dom from new (".$new_url.")...".PHP_EOL;
@@ -225,7 +228,7 @@ function getAvatar($dom) {
 }
 
 function getOriginalUrl($dom) {
-    return $dom->find('.post')[0]->find('a')->getAttribute('href');
+    return $dom->find('.post')[0]->find('a[target="_blank"]')->getAttribute('href');
 }
 
 function getScreenshot($url) {
