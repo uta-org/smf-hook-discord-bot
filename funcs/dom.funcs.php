@@ -14,7 +14,7 @@ function launchPuppeteer($args, $disable = false) {
 
     // bugfix: Don't create instance if it's already created!
     if(isset($puppeteerInstance) && isset($browserInstance)) {
-        echo "Reusing instance...";
+        echo "Reusing instance...".PHP_EOL;
         return $browserInstance;
     }
 

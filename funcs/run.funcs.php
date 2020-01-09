@@ -60,7 +60,7 @@ function startListening($db, $client, $message, $params) {
 
             $message->channel->send('Listening to channel #'.$message->channel->name.'!');
     	} else {
-            // TODO: This isn't showing...
+            // TODO: This isn't showing until everything ends...
             $msg = ':stop_sign: You are already listening to a channel, please use `$set channel` to focus on a new channel!';
 
             echo $msg;

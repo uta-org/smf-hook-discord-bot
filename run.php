@@ -23,7 +23,7 @@ $pid = getmypid();
 echo "Hello world! Your PID is: ".$pid."\n";
 file_put_contents('pid.txt', $pid);
 
-echo print_r($argv, true).PHP_EOL;
+// echo print_r($argv, true).PHP_EOL;
 
 $loop = \React\EventLoop\Factory::create();
 $client = new \CharlotteDunois\Yasmin\Client(array(), $loop);
