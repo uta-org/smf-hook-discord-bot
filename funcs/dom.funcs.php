@@ -5,6 +5,16 @@ use Nesk\Rialto\Data\JsFunction;
 use PHPHtmlParser\Dom;
 use PHPHtmlParser\CurlInterface;
 
+// Use this function all the time we need to launch puppeteer
+function launchPuppeteer($args) {
+    $puppeteer = !isset($args) ? new Puppeteer : new Puppeteer($args);
+    $browser = $puppeteer->launch([
+               'args' => ['--no-sandbox', '--disable-setuid-sandbox'],
+               'headless' => true
+    ]);
+
+    return $browser;
+}
 
 function getLoop($page, $browser, $callback) {
 	$loop = React\EventLoop\Factory::create();
@@ -22,17 +32,14 @@ function getLoop($page, $browser, $callback) {
 }
 
 function getContents($url, $callback) {
-        $puppeteer = new Puppeteer(['read_timeout' => 20]);
-        $browser = $puppeteer->launch([
-                'args' => ['--no-sandbox', '--disable-setuid-sandbox']
-        ]);
+        $browser = launchPuppeteer(['read_timeout' => 20]);
 
         $page = $browser->newPage();
         $response = $page->goto($url, [
     		'timeout' => 15000, // In milliseconds
 		]);
 
-        echo "Waiting 10 seconds to Cloudflare for url '".$url."'...";
+        echo "Waiting 10 seconds to Cloudflare for url '".$url."'...".PHP_EOL;
 		getLoop($page, $browser, $callback)->run();
 }
 

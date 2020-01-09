@@ -1,6 +1,8 @@
 <?php
 
 function sendMessage($channel, $title, $description, $image, $author, $author_avatar, $footer, $url) {
+    echo "Sending embed message...".PHP_EOL;
+
     $embed = new \CharlotteDunois\Yasmin\Models\MessageEmbed();
             
     $embed
