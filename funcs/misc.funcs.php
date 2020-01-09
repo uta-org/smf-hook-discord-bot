@@ -1,5 +1,25 @@
 <?php
 
+function sendMessage($channel, $title, $description, $image, $author, $author_avatar, $footer, $url) {
+    $embed = new \CharlotteDunois\Yasmin\Models\MessageEmbed();
+            
+    $embed
+        ->setTitle($title)
+        ->setColor(random_int(0, 16777215))
+        ->setDescription($description)
+        ->setThumbnail($image)
+        ->setImage($image)
+        ->setTimestamp()
+        ->setAuthor($author, $author_avatar)
+        ->setFooter($footer)
+        ->setURL($url);                               
+            
+    $channel->send('', array('embed' => $embed))
+            ->done(null, function ($error) {
+                echo $error.PHP_EOL;
+            });
+}
+
 function tryLock()
 {
     # If lock file exists, check if stale.  If exists and is not stale, return TRUE

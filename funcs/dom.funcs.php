@@ -1,7 +1,5 @@
 <?php
 
-// require_once __DIR__.'/../libs/php-thread/Thread.php';
-
 use Nesk\Puphpeteer\Puppeteer;
 use Nesk\Rialto\Data\JsFunction;
 use PHPHtmlParser\Dom;

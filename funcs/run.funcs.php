@@ -1,6 +1,9 @@
 <?php
 
+use Nesk\Puphpeteer\Puppeteer;
+use Nesk\Rialto\Data\JsFunction;
 use PHPHtmlParser\Dom;
+use PHPHtmlParser\CurlInterface;
 
 function startListening($db, $client, $message, $params) {
     try {
@@ -134,13 +137,12 @@ function runLoop($url, $channel) {
 
         // " (title: ".$dom->find("meta[name='title']")->text.")".PHP_EOL;
 
-        file_put_contents("ssi_test.html", $dom->outerHtml);
+        // file_put_contents("ssi_test.html", $dom->outerHtml);
 
         $divs = $dom->find("div");    
         $tables = $dom->find("table");
 
-        $data = array();
-
+    
         if(count($divs) != count($tables)) 
         {
             $channel->send(':stop_sign: Error ocurred on the server side!');
@@ -148,16 +150,20 @@ function runLoop($url, $channel) {
             return;
         }
 
+        $data = array();
+
         $j = 0;
-        for ($i=0; $i < count($divs); $i++) 
+        for ($i = 0; $i < count($divs); $i++) 
         {
             // TODO: Get id from link (discord_bot_news), then if id from last new is less than the actual id then continue
-
             $div = $divs[$i];
             $table = $tables[$i];
 
             $title_a = $div->find("a")[0];
             $table_contents = $table->find("font")[0];
+        
+            // This will be used later
+            $new_url = $title_a->getAttribute('href');
 
             $matches = array();
             preg_match('/\d+ (Enero|Febrero|Marzo|Abril|Mayo|Junio|Julio|Agosto|Septiembre|Octubre|Noviembre|Diciembre) \d+, \d+:\d+/', $table_contents->text, $matches);
@@ -165,8 +171,8 @@ function runLoop($url, $channel) {
             $published_date = $matches[0];
             $user_element = $table_contents->find("a")[0];
 
-            $data[$j]["title"] = $title_a->text;
-            $data[$j]["url"] = $title_a->getAttribute('href');
+            $data[$j]["title"] = $title_a->find("b")[0]->text;
+            $data[$j]["url"] = $new_url;
             $data[$j]["description"] = br2nl($div->find("font")[0]->innerHtml);
             $data[$j]["published_at"] = $published_date;
             $data[$j]["user_url"] = $user_element->getAttribute("href");
@@ -175,8 +181,22 @@ function runLoop($url, $channel) {
             ++$j;
         }
 
-        for ($k=0; $k < $j; $k++) 
-        { 
+        for ($k = 0; $k < $j; $k++) 
+        {
+            $new_url = $data[$k]["url"];
+
+            getDomFromUrl($new_url, function($dom) use($new_url, $data, $k, $channel) {
+                $avatar = getAvatar($dom);
+
+                $original_newurl = getOriginalUrl($dom); // Only used for screenshot
+                $screenshot_url = getScreenshot($original_newurl);
+
+                $data["avatar"] = $avatar;
+                $data["screenshot"] = $screenshot_url;
+                sendMessageFromData($channel, $data, $k);
+            });
+            
+            /*
             echo "[".$k."] Publishing new! Data: ".PHP_EOL.print_r($data[$k], true).PHP_EOL.PHP_EOL;
 
             $new = ":notepad_spiral: [".$data[$k]["title"]."](".$data[$k]["url"].")".PHP_EOL.PHP_EOL;
@@ -185,11 +205,56 @@ function runLoop($url, $channel) {
             $new .= "Noticia publicada **".$data[$k]["published_at"]."** por [".$data[$k]["username"]."](".$data[$k]["user_url"].")".PHP_EOL.PHP_EOL;
             $new .= "-----------------------------";
 
-            $channel->send($new);   
+            $channel->send($new);
+            */ 
         }
-
-        // TODO: Send to database
     });
+}
+
+function sendMessageFromData($channel, $adata, $index) {
+    $data = $adata[$index];
+
+    $data["description"] = transformDescription($data);
+    $data["footer"] = "Noticia publicada **".$data[$k]["published_at"]."** por [".$data[$k]["username"]."](".$data[$k]["user_url"].")".PHP_EOL.PHP_EOL;
+
+    // sendMessage($channel, $title, $description, $image, $author, $author_avatar, $footer, $url);
+    sendMessage($channel, $data["title"], $data["description"], $data["screenshot"], $data["username"], $data["avatar"], $data["footer"], $data["url"]);
+
+    // TODO: Send to database
+}
+
+function transformDescription($data) {
+    return $data["description"].PHP_EOL."[Leer más](".$data["url"].")";
+}
+
+function getDomFromUrl($new_url, $callback) {
+    getDomFromContents($new_url, function($dom) use($callback) {
+        $callback($dom);
+    });
+}
+
+function getAvatar($dom) {
+    return $dom->find('.avatar')[0]->getAttribute('src');
+}
+
+function getOriginalUrl($dom) {
+    return $dom->find('.post')[0]->find('a')->getAttribute('href');
+}
+
+function getScreenshot($new_url) {
+    $relative_url = 'screenshots/'. uniqid(rand(), true) . '.png';
+    $filename = __DIR__ . '/../public_html/'.$relative_url;
+
+    $puppeteer = new Puppeteer;
+    $browser = $puppeteer->launch();
+
+    $page = $browser->newPage();
+    $page->goto($new_url);
+    $page->screenshot(['path' => $filename]);
+
+    $browser->close();
+
+    return 'https://api.z3nth10n.net/'.$relative_url;
 }
 
 /*
