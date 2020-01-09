@@ -87,20 +87,27 @@ function getDom($url) {
 	return $dom;
 }
 
+$alreadyShutdown = false;
+
 function shutdown()
 {
-    global $browserInstance;
+    global $browserInstance, $alreadyShutdown;
+
+    if($alreadyShutdown)
+        exit;
 
     // This is our shutdown function, in 
     // here we can do any last operations
     // before the script is complete.
 
-    echo 'Script executed with success', PHP_EOL;
+    echo PHP_EOL.'Script executed with success!'.PHP_EOL;
 
     if(isset($browserInstance)) {
         echo "Closing browser".PHP_EOL;
         $browserInstance->close();
     }
+
+    $alreadyShutdown = true;
 
     exit;
 }
