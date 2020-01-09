@@ -196,9 +196,9 @@ function sendMessageFromData($channel, $adata, $index) {
     $data["description"] = transformDescription($data);
     $data["footer"] = "Noticia publicada **".$data[$k]["published_at"]."** por [".$data[$k]["username"]."](".$data[$k]["user_url"].")".PHP_EOL.PHP_EOL;
 
-    // sendMessage($channel, $title, $description, $image, $author, $author_avatar, $footer, $url);
-
     echo "Sending message for index '".$index."'...".PHP_EOL;
+
+    // sendMessage($channel, $title, $description, $image, $author, $author_avatar, $footer, $url);
     sendMessage($channel, $data["title"], $data["description"], $data["screenshot"], $data["username"], $data["avatar"], $data["footer"], $data["url"]);
 
     // TODO: Send to database

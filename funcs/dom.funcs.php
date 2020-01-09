@@ -101,9 +101,14 @@ function shutdown()
         echo "Closing browser".PHP_EOL;
         $browserInstance->close();
     }
+
+    exit;
 }
 
 register_shutdown_function('shutdown');
+
+declare(ticks = 1);                                      // Allow posix signal handling
+pcntl_signal(SIGINT, "shutdown");                         // Catch SIGINT, run shutdown() 
 
 class ParseClient implements CurlInterface
 {
