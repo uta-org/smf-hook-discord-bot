@@ -132,7 +132,7 @@ $loop->addPeriodicTimer(5 * 60, function () {
 */
 
 function runLoop($url, $channel) {
-    getDomFromContents($url, function($dom) use($url, $channel) {
+    getDomFromContents($url, true, function($dom) use($url, $channel) {
         echo "Getting DOM with ".strlen($dom->outerHtml)." bytes".PHP_EOL;
 
         // " (title: ".$dom->find("meta[name='title']")->text.")".PHP_EOL;
@@ -228,7 +228,7 @@ function transformDescription($data) {
 }
 
 function getDomFromUrl($new_url, $callback) {
-    getDomFromContents($new_url, function($dom) use($callback) {
+    getDomFromContents($new_url, false, function($dom) use($callback) {
         $callback($dom);
     });
 }

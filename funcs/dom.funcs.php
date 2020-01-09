@@ -6,10 +6,11 @@ use PHPHtmlParser\Dom;
 use PHPHtmlParser\CurlInterface;
 
 // Use this function all the time we need to launch puppeteer
-function launchPuppeteer($args) {
+function launchPuppeteer($args, $disable = false) {
+    $arg = $disable ? ['--no-sandbox', '--disable-setuid-sandbox'] : ['--no-sandbox'];
     $puppeteer = !isset($args) ? new Puppeteer : new Puppeteer($args);
     $browser = $puppeteer->launch([
-               'args' => ['--no-sandbox', '--disable-setuid-sandbox'],
+               'args' => $arg,
                'headless' => true
     ]);
 
@@ -31,8 +32,8 @@ function getLoop($page, $browser, $callback) {
 	return $loop;
 }
 
-function getContents($url, $callback) {
-        $browser = launchPuppeteer(['read_timeout' => 20]);
+function getContents($url, $disable, $callback) {
+        $browser = launchPuppeteer(['read_timeout' => 20], $disable);
 
         $page = $browser->newPage();
         $response = $page->goto($url, [
@@ -43,8 +44,8 @@ function getContents($url, $callback) {
 		getLoop($page, $browser, $callback)->run();
 }
 
-function getDomFromContents($url, $callback) {
-	getContents($url, function($contents) use($callback) {
+function getDomFromContents($url, $disable, $callback) {
+	getContents($url, $disable, function($contents) use($callback) {
 		$dom = new Dom;
 		$dom->load($contents);
 		$callback($dom);
