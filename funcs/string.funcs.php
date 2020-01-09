@@ -65,3 +65,8 @@ function br2nl($string)
 {
     return preg_replace('/\<br(\s*)?\/?\>/i', "\n", $string);
 }
+
+function promptException($message, $e) {
+    echo $e->getMessage().PHP_EOL;
+    $message->channel->send(':stop_sign: Exception ocurred on the server side!');
+}

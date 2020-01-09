@@ -32,7 +32,9 @@ function getLoop($page, $browser, $callback) {
 	return $loop;
 }
 
-function getContents($url, $disable, $callback) {
+function getContents($url, $message, $disable, $callback) {
+    $browser = null;
+    try {
         $browser = launchPuppeteer(['read_timeout' => 20], $disable);
 
         $page = $browser->newPage();
@@ -42,10 +44,13 @@ function getContents($url, $disable, $callback) {
 
         echo "Waiting 10 seconds to Cloudflare for url '".$url."'...".PHP_EOL;
 		getLoop($page, $browser, $callback)->run();
+    } catch(Exception $e) {
+        promptException($message, $e);
+    }
 }
 
-function getDomFromContents($url, $disable, $callback) {
-	getContents($url, $disable, function($contents) use($callback) {
+function getDomFromContents($url, $message, $disable, $callback) {
+	getContents($url, $message, $disable, function($contents) use($callback) {
 		$dom = new Dom;
 		$dom->load($contents);
 		$callback($dom);

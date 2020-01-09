@@ -50,7 +50,7 @@ function startListening($db, $client, $message, $params) {
 			$stmt->execute([$id, $smf_url, $board_id]);
 
 			$last_instance_id = $db->lastInsertId();
-            runCrawler($db, $client, $message->channel, $last_instance_id);
+            runCrawler($db, $client, $last_instance_id, $message);
 
             /*
 			$sqlNews = "INSERT INTO smf_discord_instances (channel_id, smf_url, board_id) VALUES (?, ?, ?)";
@@ -66,7 +66,7 @@ function startListening($db, $client, $message, $params) {
             // $last_id = $stmt->fetchColumn();
 
             $last_instance_id = $row["id"];
-            runCrawler($db, $client, $message->channel, $last_instance_id);
+            runCrawler($db, $client, $last_instance_id, $message);
     	}
     }
     catch(Exception $e) {
@@ -99,9 +99,8 @@ function getAllChannelIds($client) {
     return $ids;
 }
 
-function runCrawler($db, $client, $channel, $instance_id) {
-    // global $loop;
-
+function runCrawler($db, $client, $instance_id, $message) {
+    $channel = $message->channel;
 	$instance_data = getResult($db, 'smf_discord_instances', 'id=?', $instance_id);
 
     if(!$instance_data) {
@@ -115,10 +114,10 @@ function runCrawler($db, $client, $channel, $instance_id) {
     // https://foro.elhacker.net/SSI.php?ssi_function=boardNews;board=34;start=1;limit=5;length=500
     // $crawl_url = appendSlash($smf_url).'-b'.$board_id.'.0';
     $crawl_url = appendSlash($smf_url).'SSI.php?ssi_function=boardNews;board='.$board_id.';start=1;limit=5;length=500';
-	$channel = getChannelById($client, $instance_data['channel_id']);
+	$channelInstance = getChannelById($client, $instance_data['channel_id']);
 
 	// TODO: Create infinite loop to crawl data, but first create an example where the last topic is output
-    runLoop($crawl_url, $channel);
+    runLoop($crawl_url, $message, $channelInstance);
 }
 
 /*
@@ -131,8 +130,8 @@ $loop->addPeriodicTimer(5 * 60, function () {
 });
 */
 
-function runLoop($url, $channel) {
-    getDomFromContents($url, true, function($dom) use($url, $channel) {
+function runLoop($url, $message, $chhanelInstance) {
+    getDomFromContents($url, $message, true, function($dom) use($url, $message, $channelInstance) {
         echo "Getting DOM with ".strlen($dom->outerHtml)." bytes".PHP_EOL;
 
         // " (title: ".$dom->find("meta[name='title']")->text.")".PHP_EOL;
@@ -145,7 +144,7 @@ function runLoop($url, $channel) {
     
         if(count($divs) != count($tables)) 
         {
-            $channel->send(':stop_sign: Error ocurred on the server side!');
+            $channelInstance->send(':stop_sign: Error ocurred on the server side!');
             echo 'Div count is not the same of table count! ('.count($divs).' != '.count($tables).') on '.$url.PHP_EOL;
             return;
         }
@@ -185,7 +184,7 @@ function runLoop($url, $channel) {
         {
             $new_url = $data[$k]["url"];
 
-            getDomFromUrl($new_url, function($dom) use($new_url, $data, $k, $channel) {
+            getDomFromUrl($new_url, $message, function($dom) use($new_url, $data, $k, $channelInstance) {
                 $avatar = getAvatar($dom);
 
                 $original_newurl = getOriginalUrl($dom); // Only used for screenshot
@@ -193,7 +192,7 @@ function runLoop($url, $channel) {
 
                 $data["avatar"] = $avatar;
                 $data["screenshot"] = $screenshot_url;
-                sendMessageFromData($channel, $data, $k);
+                sendMessageFromData($channelInstance, $data, $k);
             });
             
             /*
@@ -227,8 +226,8 @@ function transformDescription($data) {
     return $data["description"].PHP_EOL."[Leer más](".$data["url"].")";
 }
 
-function getDomFromUrl($new_url, $callback) {
-    getDomFromContents($new_url, false, function($dom) use($callback) {
+function getDomFromUrl($new_url, $message, $callback) {
+    getDomFromContents($new_url, $message, false, function($dom) use($callback) {
         $callback($dom);
     });
 }
@@ -271,17 +270,3 @@ Noticia publicada **Hoy a las 01:00** por [wolfbcn](http://google.com)
 ===========================================================================
 
 */
-
-/*
-function getCachedChannels($client) {
-    foreach ($client->channels->all() as $channel) 
-    {
-        echo "Channel: ".$channel->name." [".$channel->getId()."]".PHP_EOL;
-    }
-}
-*/
-
-function promptException($message, $e) {
-    echo $e->getMessage().PHP_EOL;
-    $message->channel->send(':stop_sign: Exception ocurred on the server side!');
-}
