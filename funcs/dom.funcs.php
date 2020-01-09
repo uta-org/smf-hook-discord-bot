@@ -9,6 +9,7 @@ $puppeteerInstance = null;
 $browserInstance = null;
 $loopInstance = null;
 $pageInstance = null;
+$currentUrl = "";
 
 // Use this function all the time we need to launch puppeteer
 function launchPuppeteer($args, $disable = false) {
@@ -33,28 +34,34 @@ function launchPuppeteer($args, $disable = false) {
 }
 
 function getLoop($page, $callback) {
-    global $loopInstance; 
+    global $loopInstance, $currentUrl; 
 
 	$loopInstance = React\EventLoop\Factory::create();
 
-	$loopInstance->addPeriodicTimer(10, function () use($page, $callback) {
+	$loopInstance->addPeriodicTimer(10, function () use($page, $currentUrl, $callback) {
 		$contents = $page->content();
-        echo "Getting DOM with ".strlen($contents)." bytes".PHP_EOL;
+        echo "Getting DOM with ".strlen($contents)." bytes (".$currentUrl.")".PHP_EOL;
 
         $callback($contents);
+
+        // Stop the loop...
+        $loopInstance->stop();
 	});
 
 	return $loopInstance;
 }
 
 function getContents($url, $message, $disable, $callback) {
+    global $currentUrl;
+
     try {
         $page = launchPuppeteer(['read_timeout' => 20], $disable);
         $page->goto($url, [
         	'timeout' => 15000, // In milliseconds
     	]);
     
-        echo "Waiting 10 seconds to Cloudflare for url '".$url."'...".PHP_EOL;
+        $currentUrl = $url;
+        echo "Waiting 10 seconds to Cloudflare for url '".$currentUrl."'...".PHP_EOL;
 
         if(!isset($loopInstance))
 		  getLoop($page, $callback)->run();
@@ -79,6 +86,24 @@ function getDom($url) {
 
 	return $dom;
 }
+
+function shutdown()
+{
+    global $browserInstance;
+
+    // This is our shutdown function, in 
+    // here we can do any last operations
+    // before the script is complete.
+
+    echo 'Script executed with success', PHP_EOL;
+
+    if(isset($browserInstance)) {
+        echo "Closing browser".PHP_EOL;
+        $browserInstance->close();
+    }
+}
+
+register_shutdown_function('shutdown');
 
 class ParseClient implements CurlInterface
 {
