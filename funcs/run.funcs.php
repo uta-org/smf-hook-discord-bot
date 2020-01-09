@@ -229,6 +229,7 @@ function transformDescription($data) {
 
 function getDomFromUrl($new_url, $message, $callback) {
     getDomFromContents($new_url, $message, false, function($dom) use($callback) {
+        echo "Dom obtained in run.funcs.php:".PHP_EOL.PHP_EOL.print_r($dom, true).PHP_EOL;
         $callback($dom);
     });
 }
