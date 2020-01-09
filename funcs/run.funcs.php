@@ -63,7 +63,7 @@ function startListening($db, $client, $message, $params) {
             // TODO: This isn't showing until everything ends...
             $msg = ':stop_sign: You are already listening to a channel, please use `$set channel` to focus on a new channel!';
 
-            echo $msg;
+            echo $msg.PHP_EOL;
     		$message->channel->send($msg);
 
             $last_instance_id = $row["id"];

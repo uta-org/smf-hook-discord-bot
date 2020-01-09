@@ -7,6 +7,7 @@ use PHPHtmlParser\CurlInterface;
 
 $puppeteerInstance = null;
 $browserInstance = null;
+$loopInstance = null;
 
 // Use this function all the time we need to launch puppeteer
 function launchPuppeteer($args, $disable = false) {
@@ -29,18 +30,21 @@ function launchPuppeteer($args, $disable = false) {
 }
 
 function getLoop($page, $browser, $callback) {
-	$loop = React\EventLoop\Factory::create();
+    // TODO: Add queue and dequeue request
+    global $loopInstance;
 
-	$loop->addPeriodicTimer(10, function () use($page, $browser, $callback, $loop) {
+	$loopInstance = React\EventLoop\Factory::create();
+
+	$loopInstance->addPeriodicTimer(10, function () use($page, $browser, $callback) {
 		$contents = $page->content();
 
 		// echo $contents;
         $callback($contents);
-        $loop->stop();
+        // $loop->stop();
         $browser->close();
 	});
 
-	return $loop;
+	return $loopInstance;
 }
 
 function getContents($url, $message, $disable, $callback) {
@@ -54,7 +58,9 @@ function getContents($url, $message, $disable, $callback) {
 		]);
 
         echo "Waiting 10 seconds to Cloudflare for url '".$url."'...".PHP_EOL;
-		getLoop($page, $browser, $callback)->run();
+
+        if(!isset($loopInstance))
+		  getLoop($page, $browser, $callback)->run();
     } catch(Exception $e) {
         promptException($message, $e);
     }
