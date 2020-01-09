@@ -32,6 +32,7 @@ function getContents($url, $callback) {
     		'timeout' => 15000, // In milliseconds
 		]);
 
+        echo "Waiting 10 seconds to Cloudflare for url '".$url."'...";
 		getLoop($page, $browser, $callback)->run();
 }
 
