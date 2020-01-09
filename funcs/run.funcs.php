@@ -52,6 +52,7 @@ function startListening($db, $client, $message, $params) {
 			$last_instance_id = $db->lastInsertId();
             runCrawler($db, $client, $last_instance_id, $message);
 
+            // TODO: ???
             /*
 			$sqlNews = "INSERT INTO smf_discord_instances (channel_id, smf_url, board_id) VALUES (?, ?, ?)";
 			$stmt = $db->prepare($sqlInstances);
@@ -62,8 +63,6 @@ function startListening($db, $client, $message, $params) {
     	} else {
             // TODO: This isn't showing until everything ends...
             $msg = ':stop_sign: You are already listening to a channel, please use `$set channel` to focus on a new channel!';
-
-            // echo $msg.PHP_EOL;
     		$message->channel->send($msg);
 
             $last_instance_id = $row["id"];
@@ -91,12 +90,10 @@ function getAllChannelIds($client) {
     // TODO: Use PHP Linq
 
 	$ids = array();
-
     foreach ($client->channels->all() as $channel) 
     {
         $ids[] = $channel->getId();
     }
-
     return $ids;
 }
 
@@ -133,12 +130,6 @@ $loop->addPeriodicTimer(5 * 60, function () {
 
 function runLoop($url, $message, $channelInstance) {
     getDomFromContents($url, $message, true, function($dom) use($url, $message, $channelInstance) {
-        echo "Getting DOM with ".strlen($dom->outerHtml)." bytes".PHP_EOL;
-
-        // " (title: ".$dom->find("meta[name='title']")->text.")".PHP_EOL;
-
-        // file_put_contents("ssi_test.html", $dom->outerHtml);
-
         $divs = $dom->find("div");    
         $tables = $dom->find("table");
 
@@ -195,18 +186,6 @@ function runLoop($url, $message, $channelInstance) {
                 $data["screenshot"] = $screenshot_url;
                 sendMessageFromData($channelInstance, $data, $k);
             });
-            
-            /*
-            echo "[".$k."] Publishing new! Data: ".PHP_EOL.print_r($data[$k], true).PHP_EOL.PHP_EOL;
-
-            $new = ":notepad_spiral: [".$data[$k]["title"]."](".$data[$k]["url"].")".PHP_EOL.PHP_EOL;
-            $new .= $data[$k]["description"].PHP_EOL;
-            $new .= "[Leer más](".$data[$k]["url"].")".PHP_EOL;
-            $new .= "Noticia publicada **".$data[$k]["published_at"]."** por [".$data[$k]["username"]."](".$data[$k]["user_url"].")".PHP_EOL.PHP_EOL;
-            $new .= "-----------------------------";
-
-            $channel->send($new);
-            */ 
         }
     });
 }
