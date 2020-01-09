@@ -13,8 +13,10 @@ function launchPuppeteer($args, $disable = false) {
     global $puppeteerInstance, $browserInstance;
 
     // bugfix: Don't create instance if it's already created!
-    if(isset($puppeteerInstance) && isset($browserInstance))
+    if(isset($puppeteerInstance) && isset($browserInstance)) {
+        echo "Reusing instance...";
         return $browserInstance;
+    }
 
     $arg = $disable ? ['--no-sandbox', '--disable-setuid-sandbox'] : ['--no-sandbox'];
     $puppeteerInstance = !isset($args) ? new Puppeteer : new Puppeteer($args);
