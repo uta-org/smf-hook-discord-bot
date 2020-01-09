@@ -130,7 +130,7 @@ $loop->addPeriodicTimer(5 * 60, function () {
 });
 */
 
-function runLoop($url, $message, $chhanelInstance) {
+function runLoop($url, $message, $channelInstance) {
     getDomFromContents($url, $message, true, function($dom) use($url, $message, $channelInstance) {
         echo "Getting DOM with ".strlen($dom->outerHtml)." bytes".PHP_EOL;
 
