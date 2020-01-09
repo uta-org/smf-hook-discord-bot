@@ -10,8 +10,8 @@ $browserInstance = null;
 $loopInstance = null;
 $pageInstance = null;
 
-$queue = new \Ds\Queue();
-$runningLoop = false;
+// $queue = new \Ds\Queue();
+// $runningLoop = false;
 
 // Use this function all the time we need to launch puppeteer
 function launchPuppeteer($args, $disable = false) {
@@ -36,9 +36,9 @@ function launchPuppeteer($args, $disable = false) {
 }
 
 function getLoop($page, $callback) {
-    global $loopInstance, $queue, $runningLoop;
+    global $loopInstance; // , $queue, $runningLoop;
 
-    $runningLoop = true;
+    // $runningLoop = true;
 	$loopInstance = React\EventLoop\Factory::create();
 
 	$loopInstance->addPeriodicTimer(10, function () use($page, $callback, $queue) {
@@ -47,32 +47,36 @@ function getLoop($page, $callback) {
 
         $callback($contents);
 
+/*
         if($queue->count() > 0) {
             $url = $queue->pop();
             $page->goto($url, [
                 'timeout' => 15000, // In milliseconds
             ]);
         }
+*/
 	});
 
 	return $loopInstance;
 }
 
 function getContents($url, $message, $disable, $callback) {
-    global $queue, $runningLoop;
+    // global $queue, $runningLoop;
 
     try {
         $page = launchPuppeteer(['read_timeout' => 20], $disable);
 
+/*
         if($runningLoop) {
             $queue->push($url);
         }
 
         if($queue->count() == 0) {
+*/
             $page->goto($url, [
         		'timeout' => 15000, // In milliseconds
     		]);
-        }
+        // }
     
         echo "Waiting 10 seconds to Cloudflare for url '".$url."'...".PHP_EOL;
 
