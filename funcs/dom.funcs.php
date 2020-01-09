@@ -5,16 +5,25 @@ use Nesk\Rialto\Data\JsFunction;
 use PHPHtmlParser\Dom;
 use PHPHtmlParser\CurlInterface;
 
+$puppeteerInstance = null;
+$browserInstance = null;
+
 // Use this function all the time we need to launch puppeteer
 function launchPuppeteer($args, $disable = false) {
+    global $puppeteerInstance, $browserInstance;
+
+    // bugfix: Don't create instance if it's already created!
+    if(isset($puppeteerInstance) && isset($browserInstance))
+        return $browserInstance;
+
     $arg = $disable ? ['--no-sandbox', '--disable-setuid-sandbox'] : ['--no-sandbox'];
-    $puppeteer = !isset($args) ? new Puppeteer : new Puppeteer($args);
-    $browser = $puppeteer->launch([
+    $puppeteerInstance = !isset($args) ? new Puppeteer : new Puppeteer($args);
+    $browserInstance = $puppeteerInstance->launch([
                'args' => $arg,
                'headless' => true
     ]);
 
-    return $browser;
+    return $browserInstance;
 }
 
 function getLoop($page, $browser, $callback) {
