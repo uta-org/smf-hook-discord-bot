@@ -30,12 +30,12 @@ function launchPuppeteer($args, $disable = false) {
                'headless' => true
     ]);
 
-    $pageInstance = $browser->newPage();
+    $pageInstance = $browserInstance->newPage();
 
     return $pageInstance;
 }
 
-function getLoop($page, $browser, $callback) {
+function getLoop($page, $callback) {
     global $loopInstance, $queue, $runningLoop;
 
     $runningLoop = true;
@@ -60,7 +60,6 @@ function getLoop($page, $browser, $callback) {
 function getContents($url, $message, $disable, $callback) {
     global $queue, $runningLoop;
 
-    $browser = null;
     try {
         $page = launchPuppeteer(['read_timeout' => 20], $disable);
 
@@ -77,7 +76,7 @@ function getContents($url, $message, $disable, $callback) {
         echo "Waiting 10 seconds to Cloudflare for url '".$url."'...".PHP_EOL;
 
         if(!isset($loopInstance))
-		  getLoop($page, $browser, $callback)->run();
+		  getLoop($page, $callback)->run();
     } catch(Exception $e) {
         promptException($message, $e);
     }
