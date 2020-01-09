@@ -63,7 +63,7 @@ function startListening($db, $client, $message, $params) {
             // TODO: This isn't showing until everything ends...
             $msg = ':stop_sign: You are already listening to a channel, please use `$set channel` to focus on a new channel!';
 
-            echo $msg.PHP_EOL;
+            // echo $msg.PHP_EOL;
     		$message->channel->send($msg);
 
             $last_instance_id = $row["id"];
@@ -229,7 +229,11 @@ function transformDescription($data) {
 
 function getDomFromUrl($new_url, $message, $callback) {
     getDomFromContents($new_url, $message, false, function($dom) use($callback) {
-        echo "Dom obtained in run.funcs.php:".PHP_EOL.PHP_EOL.print_r($dom, true).PHP_EOL;
+        // echo "Dom obtained in run.funcs.php:".PHP_EOL.PHP_EOL.print_r($dom, true).PHP_EOL;
+
+        $filename = filter_filename($new_url);
+
+        file_put_contents("html/".$filename, $dom->outerHtml);
         $callback($dom);
     });
 }
