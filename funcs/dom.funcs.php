@@ -40,7 +40,7 @@ function getLoop($page, $callback) {
 
 	$loopInstance->addPeriodicTimer(10, function () use($page, $currentUrl, $callback, $loopInstance) {
 		$contents = $page->content();
-        echo "Getting DOM with ".strlen($contents)." bytes (".$currentUrl.")".PHP_EOL;
+        echo "Getting DOM with ".strlen($contents)." bytes (".$currentUrl.")".PHP_EOL.PHP_EOL;
 
         $callback($contents);
 
