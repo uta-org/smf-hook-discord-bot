@@ -60,10 +60,11 @@ function startListening($db, $client, $message, $params) {
 
             $message->channel->send('Listening to channel #'.$message->channel->name.'!');
     	} else {
-    		$message->channel->send(':stop_sign: You are already listening to a channel, please use `$set channel` to focus on a new channel!');
+            // TODO: This isn't showing...
+            $msg = ':stop_sign: You are already listening to a channel, please use `$set channel` to focus on a new channel!';
 
-            // $stmt = $db->query("SELECT LAST_INSERT_ID() FROM smf_discord_instances");
-            // $last_id = $stmt->fetchColumn();
+            echo $msg;
+    		$message->channel->send($msg);
 
             $last_instance_id = $row["id"];
             runCrawler($db, $client, $last_instance_id, $message);
