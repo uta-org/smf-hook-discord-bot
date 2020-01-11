@@ -12,7 +12,7 @@ function sendMessage($channel, $title, $description, $image, $author, $author_av
         //->setThumbnail($image)
         //->setImage($image)
         ->setTimestamp()
-        ->setAuthor($author, $author_avatar)
+        ->setAuthor($author)
         ->setFooter($footer)
         ->setURL($url);                               
             
