@@ -11,6 +11,8 @@ function sendMessage($channel, $title, $description, $image, $author, $author_av
         ->setDescription($description)
         //->setThumbnail($image)
         //->setImage($image)
+        ->setImage("https://foro.elhacker.net/Themes/dark/images/logo.png")
+        ->setThumbnail("https://foro.elhacker.net/Themes/dark/images/logo.png")
         ->setTimestamp()
         ->setAuthor($author)
         ->setFooter($footer)
