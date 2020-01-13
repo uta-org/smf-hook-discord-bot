@@ -48,7 +48,7 @@ function month_to_number($month, $locale_set = 'es_ES')
     return $month_number;
 }
 
-public function spanishStrtotime($date_string) {
+function spanishStrtotime($date_string) {
   $date_string = str_replace('.', '', $date_string); // to remove dots in short names of months, such as in 'janv.', 'févr.', 'avr.', ...
   return strtotime(
     strtr(
