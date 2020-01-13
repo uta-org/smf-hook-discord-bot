@@ -181,6 +181,7 @@ function runLoop($db, $url, $message, $channelInstance, $instanceData) {
 
             $threadId = getThreadId($new_url);
             if(getResult($db, 'smf_discord_news', 'thread_id=?', $threadId, 'id')) {
+                echo 'Crawled thread with id ('.$threadId.') is already saved on database! Skipping...'.PHP_EOL;
                 continue;
             }
 
@@ -188,8 +189,8 @@ function runLoop($db, $url, $message, $channelInstance, $instanceData) {
                 echo "Getting dom from new (".$new_url.")...".PHP_EOL;
                 // $avatar = getAvatar($dom);
 
-                //$original_newurl = getOriginalUrl($dom); // Only used for screenshot
-                //$screenshot_url = getScreenshot($original_newurl);
+                // $original_newurl = getOriginalUrl($dom); // Only used for screenshot
+                // $screenshot_url = getScreenshot($original_newurl);
 
                 // $data["avatar"] = $avatar;
                 // $data["screenshot"] = $screenshot_url;
@@ -227,8 +228,11 @@ function sendMessageFromData($channel, $adata, $index) {
 }
 
 function parseDatetime($raw_datetime) {
-    $raw_datetime = findMonth($raw_datetime);
-    return strtotime($raw_datetime);
+    $datetime = findMonth($raw_datetime);
+    $strToTime = strtotime($datetime);
+
+    echo "Converting raw datetime (".$raw_datetime.") to datetime (".$datetime."): ".$strToTime.PHP_EOL;
+    return $strToTime;
 }
 
 function findMonth($datetime) {
