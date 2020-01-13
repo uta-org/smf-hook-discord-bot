@@ -238,7 +238,7 @@ function parseDatetime($raw_datetime) {
 function findMonth($datetime) {
     $matches = array();
     preg_match('/(Enero|Febrero|Marzo|Abril|Mayo|Junio|Julio|Agosto|Septiembre|Octubre|Noviembre|Diciembre)/', $datetime, $matches);
-    $translatedName = getEnglishMonthName(strtolower($matches[0]));
+    $translatedName = month_to_number(strtolower($matches[0]));
 
     echo "Replacing ".$matches[0]." to ".$translatedName.PHP_EOL;
     return str_replace($matches[0], $translatedName, $datetime);
@@ -292,24 +292,6 @@ function getScreenshot($url) {
     $browser->close();
 
     return 'https://api.z3nth10n.net/'.$relative_url;
-}
-
-function getEnglishMonthName($foreignMonthName, $setlocale='es_ES'){
-
-  setlocale(LC_ALL, 'en_US');
-
-  $month_numbers = range(1,12);
-
-  foreach($month_numbers as $month)
-    $english_months[] = strftime('%B',mktime(0,0,0,$month,1,2011));
-
-  setlocale(LC_ALL, $setlocale);
-
-  foreach($month_numbers as $month)
-    $foreign_months[] = strftime('%B',mktime(0,0,0,$month,1,2011));
-
-  return str_replace($foreign_months, $english_months, $foreignMonthName);
-
 }
 
 /*
