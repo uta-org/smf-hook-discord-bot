@@ -115,7 +115,7 @@ function runCrawler($db, $client, $instance_id, $message) {
 	$channelInstance = getChannelById($client, $instance_data['channel_id']);
 
 	// TODO: Create infinite loop to crawl data, but first create an example where the last topic is output
-    runLoop($crawl_url, $message, $channelInstance);
+    runLoop($db, $crawl_url, $message, $channelInstance);
 }
 
 /*
@@ -128,8 +128,8 @@ $loop->addPeriodicTimer(5 * 60, function () {
 });
 */
 
-function runLoop($url, $message, $channelInstance) {
-    getDomFromContents($url, $message, true, function($dom) use($url, $message, $channelInstance) {
+function runLoop($db, $url, $message, $channelInstance) {
+    getDomFromContents($url, $message, true, function($dom) use($db, $url, $message, $channelInstance) {
         $divs = $dom->find("div");    
         $tables = $dom->find("table");
 
@@ -184,17 +184,24 @@ function runLoop($url, $message, $channelInstance) {
                 continue;
             }
 
-            getDomFromUrl($new_url, $message, function($dom) use($new_url, $data, $k, $channelInstance) {
+            getDomFromUrl($new_url, $message, function($dom) use($db, $new_url, $data, $k, $channelInstance) {
                 echo "Getting dom from new (".$new_url.")...".PHP_EOL;
+                // $avatar = getAvatar($dom);
+
+                //$original_newurl = getOriginalUrl($dom); // Only used for screenshot
+                //$screenshot_url = getScreenshot($original_newurl);
+
+                // $data["avatar"] = $avatar;
+                // $data["screenshot"] = $screenshot_url;
 
                 sendMessageFromData($channelInstance, $data, $k);
-                sendNewToDatabase($channelInstance->getId(), $data);
+                sendNewToDatabase($db, $channelInstance->getId(), $data);
             });
         }
     });
 }
 
-function sendNewToDatabase($instanceId, $data) {
+function sendNewToDatabase($db, $instanceId, $data) {
     $threadId = getThreadId($data["url"]);
     $userId = getUserId($data["user_url"]);
 
