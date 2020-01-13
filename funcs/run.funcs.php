@@ -197,7 +197,7 @@ function sendMessageFromData($channel, $adata, $index) {
     $data = $adata[$index];
 
     $data["description"] = transformDescription($data);
-    $data["footer"] = "Noticia publicada **".$data["published_at"]."** por [".$data["username"]."](".$data["user_url"].")".PHP_EOL.PHP_EOL;
+    $data["footer"] = "Noticia publicada ".$data["published_at"]." por ".$data["username"].PHP_EOL.PHP_EOL;
 
     echo "Sending message for index '".$index."'...".PHP_EOL;
 
