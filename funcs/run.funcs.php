@@ -115,7 +115,7 @@ function runCrawler($db, $client, $instance_id, $message) {
 	$channelInstance = getChannelById($client, $instance_data['channel_id']);
 
 	// TODO: Create infinite loop to crawl data, but first create an example where the last topic is output
-    runLoop($db, $crawl_url, $message, $channelInstance);
+    runLoop($db, $crawl_url, $message, $channelInstance, $instance_data);
 }
 
 /*
@@ -128,8 +128,8 @@ $loop->addPeriodicTimer(5 * 60, function () {
 });
 */
 
-function runLoop($db, $url, $message, $channelInstance) {
-    getDomFromContents($url, $message, true, function($dom) use($db, $url, $message, $channelInstance) {
+function runLoop($db, $url, $message, $channelInstance, $instanceData) {
+    getDomFromContents($url, $message, true, function($dom) use($db, $url, $message, $channelInstance, $instanceData) {
         $divs = $dom->find("div");    
         $tables = $dom->find("table");
 
@@ -195,7 +195,7 @@ function runLoop($db, $url, $message, $channelInstance) {
                 // $data["screenshot"] = $screenshot_url;
 
                 sendMessageFromData($channelInstance, $data, $k);
-                sendNewToDatabase($db, $channelInstance->getId(), $data[$k]);
+                sendNewToDatabase($db, $instanceData["channel_id"], $data[$k]);
             });
         }
     });
