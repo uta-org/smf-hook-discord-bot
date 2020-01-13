@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 19-12-2019 a las 12:21:37
+-- Tiempo de generación: 13-01-2020 a las 09:13:10
 -- Versión del servidor: 10.1.41-MariaDB-0+deb9u1
--- Versión de PHP: 7.3.12-1+0~20191128.49+debian9~1.gbp24559b
+-- Versión de PHP: 7.3.13-1+0~20191218.50+debian9~1.gbp23c2da
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -38,7 +38,7 @@ CREATE TABLE `smf_discord_instances` (
 --
 
 INSERT INTO `smf_discord_instances` (`id`, `channel_id`, `smf_url`, `board_id`) VALUES
-(2, 2147483647, 'https://foro.elhacker.net/', 34);
+(3, 654605831651852298, 'https://foro.elhacker.net/', 34);
 
 -- --------------------------------------------------------
 
@@ -49,9 +49,12 @@ INSERT INTO `smf_discord_instances` (`id`, `channel_id`, `smf_url`, `board_id`) 
 CREATE TABLE `smf_discord_news` (
   `id` int(11) NOT NULL,
   `instance_id` int(11) NOT NULL,
+  `thread_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
+  `user_url` text NOT NULL,
+  `username` text NOT NULL,
   `description` text NOT NULL,
-  `link` text NOT NULL,
+  `url` text NOT NULL,
   `created_at` date NOT NULL,
   `published_at` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -81,7 +84,7 @@ ALTER TABLE `smf_discord_news`
 -- AUTO_INCREMENT de la tabla `smf_discord_instances`
 --
 ALTER TABLE `smf_discord_instances`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 --
 -- AUTO_INCREMENT de la tabla `smf_discord_news`
 --

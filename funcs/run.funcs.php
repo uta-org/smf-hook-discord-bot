@@ -178,19 +178,31 @@ function runLoop($url, $message, $channelInstance) {
         {
             // TODO: Batch downloads
             $new_url = $data[$k]["url"];
+
+            $threadId = getThreadId($new_url);
+            if(getResult($db, 'smf_discord_news', 'thread_id=?', $threadId, 'id')) {
+                continue;
+            }
+
             getDomFromUrl($new_url, $message, function($dom) use($new_url, $data, $k, $channelInstance) {
                 echo "Getting dom from new (".$new_url.")...".PHP_EOL;
-                $avatar = getAvatar($dom);
+                // $avatar = getAvatar($dom);
 
                 //$original_newurl = getOriginalUrl($dom); // Only used for screenshot
                 //$screenshot_url = getScreenshot($original_newurl);
 
-                $data["avatar"] = $avatar;
+                // $data["avatar"] = $avatar;
                 // $data["screenshot"] = $screenshot_url;
                 sendMessageFromData($channelInstance, $data, $k);
             });
         }
     });
+}
+
+function sendNewToDatabase($instanceId, $threadId, $userId, $data) {
+    $sqlNews = "INSERT INTO smf_discord_news (instance_id, thread_id, user_id, user_url, username, description, url, created_at, published_at) VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), ?)";
+    $stmt = $db->prepare($sqlNews);
+    $stmt->execute([$instanceId, $threadId, $userId, $data["user_url"], $data["description"], $data["url"], parseDatetime($data["published_at"])]);
 }
 
 function sendMessageFromData($channel, $adata, $index) {
@@ -205,6 +217,10 @@ function sendMessageFromData($channel, $adata, $index) {
     sendMessage($channel, $data["title"], $data["description"], null, $data["username"], null, $data["footer"], $data["url"]);
 
     // TODO: Send to database
+}
+
+function parseDatetime($raw_datetime) {
+
 }
 
 function transformDescription($data) {
@@ -229,6 +245,18 @@ function getAvatar($dom) {
 
 function getOriginalUrl($dom) {
     return $dom->find('.post')[0]->find('a[target="_blank"]')->getAttribute('href');
+}
+
+function getThreadId($url) {
+    $matches = array();
+    preg_match('/t\d+\./', $url, $matches);
+    return substr($matches[0], 1, -1);
+}
+
+function getUserId($user_link) {
+    $matches = array();
+    preg_match('/u\d+\./', $user_link, $matches);
+    return substr($matches[0], 1, -1);
 }
 
 function getScreenshot($url) {
