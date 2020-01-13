@@ -195,7 +195,7 @@ function runLoop($db, $url, $message, $channelInstance) {
                 // $data["screenshot"] = $screenshot_url;
 
                 sendMessageFromData($channelInstance, $data, $k);
-                sendNewToDatabase($db, $channelInstance->getId(), $data);
+                sendNewToDatabase($db, $channelInstance->getId(), $data[$k]);
             });
         }
     });
