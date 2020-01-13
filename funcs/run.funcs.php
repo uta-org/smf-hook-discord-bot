@@ -184,7 +184,7 @@ function runLoop($db, $url, $message, $channelInstance, $instanceData) {
                 continue;
             }
 
-            getDomFromUrl($new_url, $message, function($dom) use($db, $new_url, $data, $k, $channelInstance) {
+            getDomFromUrl($new_url, $message, function($dom) use($db, $new_url, $data, $k, $channelInstance, $instanceData) {
                 echo "Getting dom from new (".$new_url.")...".PHP_EOL;
                 // $avatar = getAvatar($dom);
 
