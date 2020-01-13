@@ -186,16 +186,8 @@ function runLoop($url, $message, $channelInstance) {
 
             getDomFromUrl($new_url, $message, function($dom) use($new_url, $data, $k, $channelInstance) {
                 echo "Getting dom from new (".$new_url.")...".PHP_EOL;
-                // $avatar = getAvatar($dom);
 
-                //$original_newurl = getOriginalUrl($dom); // Only used for screenshot
-                //$screenshot_url = getScreenshot($original_newurl);
-
-                // $data["avatar"] = $avatar;
-                // $data["screenshot"] = $screenshot_url;
                 sendMessageFromData($channelInstance, $data, $k);
-
-
                 sendNewToDatabase($channelInstance->getId(), $data);
             });
         }
