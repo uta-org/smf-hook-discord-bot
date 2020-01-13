@@ -241,7 +241,7 @@ function findMonth($datetime) {
     $translatedName = month_to_number(strtolower($matches[0]));
 
     echo "Replacing ".$matches[0]." to ".$translatedName.PHP_EOL;
-    return str_replace($matches[0], $translatedName, $datetime);
+    return str_replace(" ".$matches[0]." ", "-".$translatedName."-", $datetime);
 }
 
 function transformDescription($data) {
