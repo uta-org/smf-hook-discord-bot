@@ -65,6 +65,7 @@ function startListening($db, $client, $message, $params) {
             $msg = ':stop_sign: You are already listening to a channel, please use `$set channel` to focus on a new channel!';
     		$message->channel->send($msg);
 
+            // TODO: Remove this
             $last_instance_id = $row["id"];
             runCrawler($db, $client, $last_instance_id, $message);
     	}
@@ -114,7 +115,7 @@ function runCrawler($db, $client, $instance_id, $message) {
     $crawl_url = appendSlash($smf_url).'SSI.php?ssi_function=boardNews;board='.$board_id.';start=1;limit=5;length=500';
 	$channelInstance = getChannelById($client, $instance_data['channel_id']);
 
-	// TODO: Create infinite loop to crawl data, but first create an example where the last topic is output
+	// TODO: Create infinite loop to crawl data
     runLoop($db, $crawl_url, $message, $channelInstance, $instance_data);
 }
 
@@ -223,8 +224,6 @@ function sendMessageFromData($channel, $adata, $index) {
 
     // sendMessage($channel, $title, $description, $image, $author, $author_avatar, $footer, $url);
     sendMessage($channel, $data["title"], $data["description"], null, $data["username"], null, $data["footer"], $data["url"]);
-
-    // TODO: Send to database
 }
 
 function parseDatetime($raw_datetime) {
@@ -250,8 +249,6 @@ function transformDescription($data) {
 
 function getDomFromUrl($new_url, $message, $callback) {
     getDomFromContents($new_url, $message, false, function($dom) use($callback, $new_url) {
-        // echo "Dom obtained in run.funcs.php:".PHP_EOL.PHP_EOL.print_r($dom, true).PHP_EOL;
-
         $filename = substr($new_url, strrpos($new_url, '/') + 1);
         $filename = filter_filename($filename);
 
