@@ -207,7 +207,7 @@ function sendNewToDatabase($db, $instanceId, $data) {
 
     $sqlNews = "INSERT INTO smf_discord_news (instance_id, thread_id, user_id, user_url, username, description, url, created_at, published_at) VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), ?)";
     $stmt = $db->prepare($sqlNews);
-    $stmt->execute([$instanceId, $threadId, $userId, $data["user_url"], $data["description"], $data["url"], parseDatetime($data["published_at"])]);
+    $stmt->execute([$instanceId, $threadId, $userId, $data["user_url"], $data["username"], $data["description"], $data["url"], parseDatetime($data["published_at"])]);
 }
 
 function sendMessageFromData($channel, $adata, $index) {
