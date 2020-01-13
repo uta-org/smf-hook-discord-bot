@@ -194,12 +194,18 @@ function runLoop($url, $message, $channelInstance) {
                 // $data["avatar"] = $avatar;
                 // $data["screenshot"] = $screenshot_url;
                 sendMessageFromData($channelInstance, $data, $k);
+
+
+                sendNewToDatabase($channelInstance->getId(), $data);
             });
         }
     });
 }
 
-function sendNewToDatabase($instanceId, $threadId, $userId, $data) {
+function sendNewToDatabase($instanceId, $data) {
+    $threadId = getThreadId($data["url"]);
+    $userId = getUserId($data["user_url"]);
+
     $sqlNews = "INSERT INTO smf_discord_news (instance_id, thread_id, user_id, user_url, username, description, url, created_at, published_at) VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), ?)";
     $stmt = $db->prepare($sqlNews);
     $stmt->execute([$instanceId, $threadId, $userId, $data["user_url"], $data["description"], $data["url"], parseDatetime($data["published_at"])]);
@@ -220,7 +226,15 @@ function sendMessageFromData($channel, $adata, $index) {
 }
 
 function parseDatetime($raw_datetime) {
+    $raw_datetime = findMonth($raw_datetime);
+    return strtotime($raw_datetime);
+}
 
+function findMonth($datetime) {
+    $matches = array();
+    preg_match('/(Enero|Febrero|Marzo|Abril|Mayo|Junio|Julio|Agosto|Septiembre|Octubre|Noviembre|Diciembre)/', $datetime, $matches);
+    $translatedName = getEnglishMonthName($matches[0]);
+    return str_replace($matches[0], $translatedName, $datetime);
 }
 
 function transformDescription($data) {

@@ -3,6 +3,7 @@
 require __DIR__.'/../composer-yasmin/vendor/autoload.php';
 require 'db/db.conn.php';
 require 'funcs/db.funcs.php';
+require 'funcs/globalization.funcs.php';
 require 'funcs/dom.funcs.php';
 require 'funcs/string.funcs.php';
 require 'funcs/run.funcs.php';
