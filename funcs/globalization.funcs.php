@@ -1,6 +1,6 @@
 <?php
 
-function getEnglishMonthName($foreignMonthName,$setlocale='es_ES'){
+function getEnglishMonthName($foreignMonthName, $setlocale='es_ES'){
 
   setlocale(LC_ALL, 'en_US');
 
