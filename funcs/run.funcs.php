@@ -202,6 +202,8 @@ function runLoop($db, $url, $message, $channelInstance, $instanceData) {
 }
 
 function sendNewToDatabase($db, $instanceId, $data) {
+    echo 'Adding to database with instance id: '.$instanceId.PHP_EOL;
+
     $threadId = getThreadId($data["url"]);
     $userId = getUserId($data["user_url"]);
 
