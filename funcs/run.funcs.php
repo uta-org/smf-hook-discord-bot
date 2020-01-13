@@ -238,7 +238,7 @@ function parseDatetime($raw_datetime) {
 function findMonth($datetime) {
     $matches = array();
     preg_match('/(Enero|Febrero|Marzo|Abril|Mayo|Junio|Julio|Agosto|Septiembre|Octubre|Noviembre|Diciembre)/', $datetime, $matches);
-    $translatedName = getEnglishMonthName($matches[0]);
+    $translatedName = getEnglishMonthName(strtolower($matches[0]));
 
     echo "Replacing ".$matches[0]." to ".$translatedName.PHP_EOL;
     return str_replace($matches[0], $translatedName, $datetime);
